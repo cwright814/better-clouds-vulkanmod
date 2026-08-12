@@ -9,10 +9,10 @@
 
 ![Better Clouds with VulkanMod](assets/better-clouds.png)
 
-**Please, feel free to [report](https://github.com/Qendolin/better-clouds/issues) any issues**
+**Please, feel free to [report](https://github.com/cwright814/better-clouds/issues) any issues**
 
-> hi everyone, i'm the new maintainer now. the mod is no longer discontinued. cheers  
-> -orangishcat
+> I am not an official maintainer, nor am I a graphics engineer. I am however a web engineer with access to Gemini Pro. I think this effort came out quite well. I've only tested it with Minecraft v26.1.2 and VulkanMod v0.6.8 + Beryl v0.2.1.  
+> -Christopher
 
 ---
 
