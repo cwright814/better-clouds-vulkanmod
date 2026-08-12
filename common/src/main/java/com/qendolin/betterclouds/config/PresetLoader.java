@@ -39,7 +39,7 @@ public class PresetLoader<T extends AbstractPresetConfig> implements PreparableR
     public final Identifier id;
     public final Identifier resourceId;
     private final Gson GSON = new GsonBuilder()
-            .setLenient()
+            .setStrictness(com.google.gson.Strictness.LENIENT)
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(ShaderPresetConfig.class, ShaderPresetConfig.INSTANCE_CREATOR)
             .registerTypeAdapter(NoisePresetConfig.class, NoisePresetConfig.INSTANCE_CREATOR)

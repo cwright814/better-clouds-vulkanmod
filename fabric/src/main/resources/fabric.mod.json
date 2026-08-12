@@ -58,7 +58,6 @@
     "sodium" : "*"
   },
   "breaks" : {
-    "vulkanmod" : "*",
     "iris" : "<1.6.0",
     "immersive_portals" : "*"
   }

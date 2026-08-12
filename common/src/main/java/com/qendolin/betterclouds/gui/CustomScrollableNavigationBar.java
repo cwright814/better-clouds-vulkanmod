@@ -22,10 +22,11 @@ public class CustomScrollableNavigationBar extends ScrollableNavigationBar {
         if (client.level == null) {
             return false;
         }
-        if (client.gui.screen() instanceof ConfigScreen) {
+        net.minecraft.client.gui.screens.Screen currentScreen = com.qendolin.betterclouds.util.ScreenUtil.getCurrentScreen(client);
+        if (currentScreen instanceof ConfigScreen) {
             return true;
         }
-        if (client.gui.screen() instanceof PopupControllerScreen popupScreen) {
+        if (currentScreen instanceof PopupControllerScreen popupScreen) {
             return ((PopupControllerScreenAccessor) popupScreen).getBackgroundYaclScreen() instanceof ConfigScreen;
         }
         return false;

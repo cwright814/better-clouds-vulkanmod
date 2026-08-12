@@ -54,7 +54,7 @@ public class ConfigManager {
                 .id(CONFIG_ID)
                 .serializer(config -> GsonConfigSerializerBuilder.create(config)
                         .appendGsonBuilder(b -> b
-                                .setLenient()
+                                .setStrictness(com.google.gson.Strictness.LENIENT)
                                 .serializeNulls()
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                                 .setPrettyPrinting()

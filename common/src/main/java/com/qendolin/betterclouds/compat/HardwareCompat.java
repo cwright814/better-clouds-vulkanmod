@@ -4,6 +4,8 @@ import java.util.stream.Stream;
 
 public class HardwareCompat {
     public static boolean isMaybeIncompatible() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) return false;
+
         String cpu = GLCompat.getCpuInfo();
         if (cpu == null) cpu = "";
         String cpuNormalized = cpu.toLowerCase();

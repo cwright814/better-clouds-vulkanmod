@@ -48,6 +48,7 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
 
     @Unique
     private Renderer better_clouds$cloudRenderer;
+    private com.qendolin.betterclouds.clouds.vulkan.VulkanRenderer better_clouds$vulkanRenderer;
     @Unique
     private Frustum better_clouds$frustum;
     @Shadow
@@ -56,8 +57,12 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(CallbackInfo ci) {
-        if (glCompat.isIncompatible()) return;
-        better_clouds$cloudRenderer = new Renderer(Minecraft.getInstance());
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            better_clouds$vulkanRenderer = new com.qendolin.betterclouds.clouds.vulkan.VulkanRenderer(Minecraft.getInstance());
+        } else {
+            if (glCompat.isIncompatible()) return;
+            better_clouds$cloudRenderer = new Renderer(Minecraft.getInstance());
+        }
     }
 
     @Override
@@ -68,6 +73,10 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
     @Inject(at = @At("TAIL"), method = "onResourceManagerReload(Lnet/minecraft/server/packs/resources/ResourceManager;)V", require = 0)
     private void onReload(ResourceManager manager, CallbackInfo ci) {
         if (!BetterClouds.isInitialized()) return;
+        if (better_clouds$vulkanRenderer != null) {
+            better_clouds$vulkanRenderer.reload(manager);
+            return;
+        }
         if (glCompat.isIncompatible()) return;
         if (better_clouds$cloudRenderer != null)
             better_clouds$cloudRenderer.reload(manager);
@@ -76,15 +85,18 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
     @Inject(at = @At("TAIL"), method = "setLevel", require = 0)
     private void onSetWorld(ClientLevel world, CallbackInfo ci) {
         if (better_clouds$cloudRenderer != null) better_clouds$cloudRenderer.setWorld(world);
+        if (better_clouds$vulkanRenderer != null) better_clouds$vulkanRenderer.setWorld(world);
     }
 
-    @Inject(at = @At("TAIL"), method = "invalidateCompiledGeometry")
-    private void onInvalidateCompiledGeometry(ClientLevel world, Options options, Camera camera, BlockColors blockColors, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "allChanged")
+    private void onInvalidateCompiledGeometry(CallbackInfo ci) {
+        ClientLevel world = Minecraft.getInstance().level;
         if (better_clouds$cloudRenderer != null) better_clouds$cloudRenderer.setWorld(world);
+        if (better_clouds$vulkanRenderer != null) better_clouds$vulkanRenderer.setWorld(world);
     }
 
-    @Inject(at = @At("HEAD"), method = "render")
-    private void captureViewAndProjectionMatrix(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline, CameraRenderState cameraRenderState, Matrix4fc positionMatrix, GpuBufferSlice fogBuffer, Vector4f fogColor, boolean renderSky, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "renderLevel")
+    private void captureViewAndProjectionMatrix(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline, CameraRenderState cameraRenderState, Matrix4fc positionMatrix, GpuBufferSlice fogBuffer, Vector4f fogColor, boolean renderSky, net.minecraft.client.renderer.chunk.ChunkSectionsToRender chunkSections, CallbackInfo ci) {
         better_clouds$frustum = cameraRenderState.cullFrustum;
         Vec3 cameraPos = cameraRenderState.pos;
         better_clouds$frustum.prepare(cameraPos.x, cameraPos.y, cameraPos.z);
@@ -119,8 +131,10 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
         Matrix4f projMat = RenderHelper.getProjectionMatrix();
         RenderHelper.setProjectionMatrix(new Matrix4f(projMat));
         RenderHelper.setViewMatrix(new Matrix4f(viewMat));
-        if (better_clouds$cloudRenderer == null) return;
-        if (glCompat.isIncompatible()) return;
+        
+        if (better_clouds$cloudRenderer == null && better_clouds$vulkanRenderer == null) return;
+        if (better_clouds$vulkanRenderer == null && glCompat.isIncompatible()) return;
+        
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
         if (!ConfigManager.instance().enabledDimensions.contains(level.dimensionTypeRegistration().unwrapKey().orElse(null)))
@@ -140,7 +154,13 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
             tickDelta = 0;
         }
 
-        Renderer.PrepareResult prepareResult = better_clouds$cloudRenderer.prepare(viewMat, projMat, ticks, tickDelta, cam);
+        Renderer.PrepareResult prepareResult;
+        if (better_clouds$vulkanRenderer != null) {
+            prepareResult = better_clouds$vulkanRenderer.prepare(viewMat, projMat, ticks, tickDelta, cam);
+        } else {
+            prepareResult = better_clouds$cloudRenderer.prepare(viewMat, projMat, ticks, tickDelta, cam);
+        }
+        
         if (RenderDoc.isFrameCapturing())
             glCompat.debugMessage("renderer prepare returned " + prepareResult.name());
 
@@ -164,7 +184,11 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
             renderPass.executes(() -> {
                 getProfiler().push("clouds");
                 glCompat.pushDebugGroupDev("Better Clouds");
-                better_clouds$cloudRenderer.render(fticks, ftickDelta, fcam, ffrustumPos, ffrustum);
+                if (better_clouds$vulkanRenderer != null) {
+                    better_clouds$vulkanRenderer.render(fticks, ftickDelta, fcam, ffrustumPos, ffrustum);
+                } else {
+                    better_clouds$cloudRenderer.render(fticks, ftickDelta, fcam, ffrustumPos, ffrustum);
+                }
                 getProfiler().pop();
                 glCompat.popDebugGroupDev();
             });
@@ -178,5 +202,6 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
     @Inject(at = @At("HEAD"), method = "close")
     private void close(CallbackInfo ci) {
         if (better_clouds$cloudRenderer != null) better_clouds$cloudRenderer.close();
+        if (better_clouds$vulkanRenderer != null) better_clouds$vulkanRenderer.close();
     }
 }

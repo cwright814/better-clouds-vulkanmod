@@ -106,7 +106,7 @@ public class RenderDocLoader {
     private static void downloadWindows() throws IOException {
         File archive = BetterCloudsStatic.getDataDirectory().resolve("RenderDoc_1.30_64.zip").toFile();
 
-        FileUtils.copyURLToFile(new URL("https://renderdoc.org/stable/1.30/RenderDoc_1.30_64.zip"), archive);
+        FileUtils.copyURLToFile(java.net.URI.create("https://renderdoc.org/stable/1.30/RenderDoc_1.30_64.zip").toURL(), archive);
 
         try (ZipFile zipFile = new ZipFile(archive)) {
             InputStream dllEntry = zipFile.getInputStream(zipFile.getEntry("RenderDoc_1.30_64/renderdoc.dll"));
@@ -121,7 +121,7 @@ public class RenderDocLoader {
     private static void downloadLinux() throws IOException {
         File archive = BetterCloudsStatic.getDataDirectory().resolve("renderdoc_1.30.tar.gz").toFile();
 
-        FileUtils.copyURLToFile(new URL("https://renderdoc.org/stable/1.30/renderdoc_1.30.tar.gz"), archive);
+        FileUtils.copyURLToFile(java.net.URI.create("https://renderdoc.org/stable/1.30/renderdoc_1.30.tar.gz").toURL(), archive);
 
         try (FileInputStream source = new FileInputStream(archive);
              GZIPInputStream gzip = new GZIPInputStream(source);
@@ -130,7 +130,7 @@ public class RenderDocLoader {
             File dllFile = LIB_LINUX_PATH.toFile();
             TarArchiveEntry entry;
             boolean found = false;
-            while ((entry = tar.getNextTarEntry()) != null) {
+            while ((entry = tar.getNextEntry()) != null) {
                 String name = entry.getName();
                 if (name.equalsIgnoreCase("renderdoc_1.30/lib/librenderdoc.so")) {
                     FileUtils.copyInputStreamToFile(tar, dllFile);

@@ -22,6 +22,7 @@ dependencies {
     "minecraft"("com.mojang:minecraft:$mcVersion")
 
     compileOnly("org.jetbrains:annotations:26.0.2")
+    compileOnly("net.fabricmc:fabric-loader:${property("loader.fabric")}")
     compileOnly("net.fabricmc:sponge-mixin:0.17.0+mixin.0.8.7")
     compileOnly("com.github.bawnorton.mixinsquared:mixinsquared-common:${property("deps.mixinsquared")}")
     compileOnly("io.github.llamalad7:mixinextras-common:${property("deps.mixin_extras")}")
@@ -32,6 +33,7 @@ dependencies {
     compileOnly("maven.modrinth:YL57xq9U:${property("deps.iris")}-fabric")
     compileOnly("gs.mclo:api:${property("deps.mclo_api")}")
     compileOnly("maven.modrinth:Xs0XTOVv:${property("deps.distanthorizons_api")}")
+    compileOnly(files("../libs/VulkanMod-0.6.8+26.1.2.jar"))
 
     testImplementation(platform("org.junit:junit-bom:5.12.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -41,6 +43,7 @@ dependencies {
 
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(25)
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 tasks.withType<Test>().configureEach {

@@ -137,13 +137,12 @@ public class ChunkedGenerator implements AutoCloseable {
         buffer.unbind();
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public synchronized boolean reallocateIfStale(Config options, boolean fancy) {
         int bufferSize = calcBufferSize(options);
 
-        if (buffer.hasChanged(bufferSize, fancy, options.usePersistentBuffers)) {
+        if (buffer == null || buffer.hasChanged(bufferSize, fancy, options.usePersistentBuffers)) {
             clear();
-            buffer.close();
+            if (buffer != null) buffer.close();
             buffer = new Buffer(bufferSize, fancy, options.usePersistentBuffers);
             return true;
         }

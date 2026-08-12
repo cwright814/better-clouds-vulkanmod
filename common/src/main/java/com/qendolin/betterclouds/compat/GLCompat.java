@@ -196,21 +196,24 @@ public class GLCompat {
         boolean canReadStencil = supportsStencilTexturing;
 
         String reason = null;
-        if (hasContext) {
-            if (!openGl32) {
-                reason = "OpenGL 3.2 is required";
-            } else if (!(openGl33 || (glVertexAttribDivisor || arbInstancedArrays))) {
-                reason = "OpenGL 3.3, glVertexAttribDivisor, or arbInstancedArrays is required";
-            } else if (!(supportsStencilTexturing || (openGl40 || (glBlendFunci && glBlendEquationi) || arbDrawBuffersBlend))) {
-                reason = "OpenGL 4.0, arbStencilTexturing, glBlendFunci and glBlendEquationi, or arbDrawBuffersBlend is required";
-            }
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            compatible = true;
         } else {
-            reason = "No OpenGL Context";
-        }
-
-        compatible = reason == null;
-        if (reason != null) {
-            BetterCloudsStatic.getLogger().warn("OpenGL compatibility check failed: " + reason);
+            if (hasContext) {
+                if (!openGl32) {
+                    reason = "OpenGL 3.2 is required";
+                } else if (!(openGl33 || (glVertexAttribDivisor || arbInstancedArrays))) {
+                    reason = "OpenGL 3.3, glVertexAttribDivisor, or arbInstancedArrays is required";
+                } else if (!(supportsStencilTexturing || (openGl40 || (glBlendFunci && glBlendEquationi) || arbDrawBuffersBlend))) {
+                    reason = "OpenGL 4.0, arbStencilTexturing, glBlendFunci and glBlendEquationi, or arbDrawBuffersBlend is required";
+                }
+            } else {
+                reason = "No OpenGL Context";
+            }
+            compatible = reason == null;
+            if (reason != null) {
+                BetterCloudsStatic.getLogger().warn("OpenGL compatibility check failed: " + reason);
+            }
         }
 
         useBaseInstanceFallback = !supportsBaseInstance;
@@ -234,23 +237,36 @@ public class GLCompat {
         GL_MAP_COHERENT_BIT = ARBBufferStorage.GL_MAP_COHERENT_BIT;
     }
 
+    private static boolean hasGlContext() {
+        try { return org.lwjgl.glfw.GLFW.glfwGetCurrentContext() != 0; } catch (Throwable t) { return false; }
+    }
+
     public static String getVendor() {
-        return GL32.glGetString(GL32.GL_VENDOR);
+        if (!hasGlContext()) return "Unknown";
+        try { return GL32.glGetString(GL32.GL_VENDOR); } catch (Exception e) { return "Unknown"; }
     }
 
     public static String getCpuInfo() {
-        return GLX._getCpuInfo();
+        if (!hasGlContext()) return "Unknown";
+        try { return GLX._getCpuInfo(); } catch (Exception e) { return "Unknown"; }
     }
 
     public static String getRenderer() {
-        return GL32.glGetString(GL32.GL_RENDERER);
+        if (!hasGlContext()) return "Unknown";
+        try { return GL32.glGetString(GL32.GL_RENDERER); } catch (Exception e) { return "Unknown"; }
     }
 
     public static String getVersion() {
-        return GL32.glGetString(GL32.GL_VERSION);
+        if (!hasGlContext()) return "Unknown";
+        try { return GL32.glGetString(GL32.GL_VERSION); } catch (Exception e) { return "Unknown"; }
     }
 
     public static void initGlCompat() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            BetterCloudsStatic.getLogger().info("Initializing VulkanMod compat");
+            glCompat = new GLCompat(BetterCloudsStatic.IS_DEV);
+            return;
+        }
         BetterCloudsStatic.getLogger().info("Initializing OpenGL compat");
         glCompat = new GLCompat(BetterCloudsStatic.IS_DEV);
 
@@ -556,7 +572,7 @@ public class GLCompat {
 
     public void shaderSource(int shader, String source) {
         // Fixes https://github.com/Qendolin/better-clouds/issues/218 hopefully
-        byte[] sourceBytes = source.getBytes(Charsets.UTF_8);
+        byte[] sourceBytes = source.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         ByteBuffer buffer = MemoryUtil.memAlloc(sourceBytes.length + 1);
         buffer.put(sourceBytes);
         buffer.put((byte) 0);

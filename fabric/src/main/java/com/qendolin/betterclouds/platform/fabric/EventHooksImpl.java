@@ -8,16 +8,10 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import org.jspecify.annotations.NonNull;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -35,27 +29,11 @@ public class EventHooksImpl extends EventHooks {
     @Override
     public void onClientResourcesReload(Supplier<PreparableReloadListener> supplier) {
         PreparableReloadListener reloader = supplier.get();
-        IdentifiableResourceReloadListener listener;
-        if (reloader instanceof IdentifiableResourceReloadListener identifiable) {
-            listener = identifiable;
-        } else {
-            Identifier id = reloader instanceof PresetLoader
-                    ? ((PresetLoader) reloader).id
-                    : Identifier.fromNamespaceAndPath(BetterCloudsStatic.MODID, "resource_reloader");
-            listener = new IdentifiableResourceReloadListener() {
-                @Override
-                public @NonNull Identifier getFabricId() {
-                    return id;
-                }
+        Identifier id = reloader instanceof PresetLoader
+                ? ((PresetLoader) reloader).id
+                : Identifier.fromNamespaceAndPath(BetterCloudsStatic.MODID, "resource_reloader");
 
-                @Override
-                public @NonNull CompletableFuture<Void> reload(@NonNull SharedState store, @NonNull Executor loadExecutor, @NonNull PreparationBarrier helper, @NonNull Executor applyExecutor) {
-                    return reloader.reload(store, loadExecutor, helper, applyExecutor);
-                }
-            };
-        }
-
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(listener);
+        net.fabricmc.fabric.api.resource.v1.ResourceLoader.get(net.minecraft.server.packs.PackType.CLIENT_RESOURCES).registerReloadListener(id, reloader);
     }
 
     @Override

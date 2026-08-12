@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+@SuppressWarnings("deprecation")
 public class CustomButtonOption implements ButtonOption {
 
     private final Supplier<Component> name;

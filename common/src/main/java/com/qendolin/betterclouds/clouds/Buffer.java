@@ -31,6 +31,20 @@ public class Buffer implements AutoCloseable {
         this.size = size;
         this.fancy = fancy;
 
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            vaoId = 0;
+            meshId = 0;
+            writeBufferId = 0;
+            drawBufferId = 0;
+            instanceVertexCount = fancy ? Mesh.FANCY_MESH_VERTEX_COUNT : Mesh.FAST_MESH_VERTEX_COUNT;
+            if (size <= 0) size = 1;
+            long vboSize = (long) size * size * 3 * Float.BYTES;
+            writeBuffer = MemoryUtil.memAllocFloat((int) (vboSize / Float.BYTES));
+            drawBuffer = MemoryUtil.memAllocFloat((int) (vboSize / Float.BYTES));
+            this.usePersistent = false;
+            return;
+        }
+
         vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
         glCompat.objectLabelDev(glCompat.GL_VERTEX_ARRAY, vaoId, "clouds_buffer");
@@ -111,6 +125,7 @@ public class Buffer implements AutoCloseable {
     }
 
     public void setVAPointerToInstance(int baseInstance) {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) return;
         // The caller must bind the vao and vbo
         int stride = Float.BYTES * 3;
         long pointer = (long) stride * baseInstance;
@@ -129,6 +144,11 @@ public class Buffer implements AutoCloseable {
 
     @Override
     public void close() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            MemoryUtil.memFree(writeBuffer);
+            MemoryUtil.memFree(drawBuffer);
+            return;
+        }
         glDeleteVertexArrays(vaoId);
         glDeleteBuffers(drawBufferId);
         glDeleteBuffers(writeBufferId);
@@ -152,6 +172,14 @@ public class Buffer implements AutoCloseable {
      * The buffer (the vao specifically) should be bound when calling this method
      */
     public void swap() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            FloatBuffer tmpBuffer = drawBuffer;
+            drawBuffer = writeBuffer;
+            writeBuffer = tmpBuffer;
+            swapCount++;
+            return;
+        }
+        
         if (usePersistent) {
             int tmpId = drawBufferId;
             FloatBuffer tmpBuffer = drawBuffer;
@@ -175,14 +203,21 @@ public class Buffer implements AutoCloseable {
     }
 
     public void bind() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) return;
         glBindVertexArray(vaoId);
     }
 
     public void bindDrawBuffer() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) return;
         glBindBuffer(GL_ARRAY_BUFFER, drawBufferId);
     }
 
     public void unbind() {
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) return;
         Resources.unbindVao();
+    }
+    
+    public FloatBuffer getDrawBuffer() {
+        return drawBuffer;
     }
 }

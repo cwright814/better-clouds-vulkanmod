@@ -90,11 +90,7 @@ tasks.named<ProcessResources>("processResources") {
             "version" to project.version,
             "loader" to loader,
     )
-    props["mc_version_range"] = findProperty("deps.minecraft").toString()
-            .replace("-rc-", "-rc.")
-            .replace("-pre-", "-pre.")
-            .split(",")
-            .joinToString(", ") { "\"~$it\"" }
+    props["mc_version_range"] = "\">=26.1.2 <26.3-\""
 
     inputs.properties(props)
 
@@ -108,6 +104,7 @@ tasks.named<ProcessResources>("processResources") {
 
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(25)
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 java {

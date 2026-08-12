@@ -21,6 +21,7 @@ public abstract class DistantHorizonsSharedCompatImpl extends DistantHorizonsCom
     private boolean isDhInitialized = false;
     private DhApiRenderParam lastRenderParam = null;
 
+    @SuppressWarnings("deprecation")
     public DistantHorizonsSharedCompatImpl() {
         BetterCloudsStatic.getLogger().info("Registering DH Api events");
         // Lambdas didn't work
