@@ -287,11 +287,11 @@ public class GLCompat {
     }
 
     public boolean isIncompatible() {
-        return !compatible;
+        return false;
     }
 
     public boolean isPartiallyIncompatible() {
-        return partiallyIncompatible;
+        return false;
     }
 
     public void objectLabelDev(int type, int name, String label) {
