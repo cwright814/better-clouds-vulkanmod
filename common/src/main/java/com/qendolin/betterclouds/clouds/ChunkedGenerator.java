@@ -541,11 +541,11 @@ public class ChunkedGenerator implements AutoCloseable {
                         
                         // Add a deterministic offset to prevent Z-fighting between overlapping clouds.
                         // Increased from 0.005f to 0.03f to overcome 24-bit depth precision limits at long distances.
-                        float zFightOffset = (Math.abs(sampleX * 3) % 10 + Math.abs(sampleZ * 7) % 10) * 0.03f;
+                        float zFightOffset = (Math.abs(sampleX * 3) % 10 + Math.abs(sampleZ * 7) % 10) * 0.03f * options.zFightOffsetMultiplier;
                         float y = cloudHeight + options.yOffset + zFightOffset;
                         
-                        float zFightOffsetX = (Math.abs(sampleZ * 5) % 10) * 0.015f;
-                        float zFightOffsetZ = (Math.abs(sampleX * 9) % 10) * 0.015f;
+                        float zFightOffsetX = (Math.abs(sampleZ * 5) % 10) * 0.015f * options.zFightOffsetMultiplier;
+                        float zFightOffsetZ = (Math.abs(sampleX * 9) % 10) * 0.015f * options.zFightOffsetMultiplier;
                         
                         float z = exactZ + generator.sampler.randomOffsetZ(sampleX, sampleZ, pass) * options.randomPlacement * spacing + zFightOffsetZ;
                         x += zFightOffsetX;

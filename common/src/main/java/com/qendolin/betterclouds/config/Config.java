@@ -46,6 +46,8 @@ public class Config {
     @SerialEntry
     public float yOffset = 0f;
     @SerialEntry
+    public float zFightOffsetMultiplier = 1.0f;
+    @SerialEntry
     public float bottomSparsity = 0f;
     @SerialEntry
     public float sparsity = 0f;
