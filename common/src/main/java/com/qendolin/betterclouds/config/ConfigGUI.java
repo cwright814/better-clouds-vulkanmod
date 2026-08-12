@@ -46,6 +46,8 @@ public class ConfigGUI {
     public final Option<Float> sizeXZ;
     public final Option<Float> sizeY;
     public final Option<Float> scaleFalloffMin;
+    public final Option<Float> rainDarkness;
+    public final Option<Float> thunderDarkness;
     public final Option<Float> travelSpeed;
     public final Option<Float> windEffectFactor;
     public final Option<Float> windSpeedFactor;
@@ -150,6 +152,14 @@ public class ConfigGUI {
                 .binding(defaults.scaleFalloffMin, () -> config.scaleFalloffMin, val -> config.scaleFalloffMin = val)
                 .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
                 .build();
+        this.rainDarkness = createOption(float.class, "rainDarkness")
+                .binding(defaults.rainDarkness, () -> config.rainDarkness, val -> config.rainDarkness = val)
+                .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
+                .build();
+        this.thunderDarkness = createOption(float.class, "thunderDarkness")
+                .binding(defaults.thunderDarkness, () -> config.thunderDarkness, val -> config.thunderDarkness = val)
+                .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
+                .build();
         this.travelSpeed = createOption(float.class, "travelSpeed")
                 .binding(defaults.travelSpeed, () -> config.travelSpeed, val -> config.travelSpeed = val)
                 .customController(opt -> new FloatSliderController(opt, 0, 0.4f, 0.005f, ConfigGUI::formatAsBlocksPerSecond))
@@ -160,7 +170,7 @@ public class ConfigGUI {
                 .build();
         this.windSpeedFactor = createOption(float.class, "windSpeedFactor")
                 .binding(defaults.windSpeedFactor, () -> config.windSpeedFactor, val -> config.windSpeedFactor = val)
-                .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
+                .customController(opt -> new FloatSliderController(opt, 0, 20.0f, 0.1f, ConfigGUI::formatAsTimes))
                 .build();
         this.colorVariationFactor = createOption(float.class, "colorVariationFactor")
                 .binding(defaults.colorVariationFactor, () -> config.colorVariationFactor, val -> config.colorVariationFactor = val)
@@ -204,7 +214,9 @@ public class ConfigGUI {
         commonAppearanceGroup.addAll(List.of(
                 enabled,
                 shaderPresetGUI.opacity,
-                shaderPresetGUI.opacityFactor
+                shaderPresetGUI.opacityFactor,
+                rainDarkness,
+                thunderDarkness
         ));
 
         commonCategory.add(new Tuple<>(OptionGroup.createBuilder()
@@ -273,6 +285,8 @@ public class ConfigGUI {
                 .name(groupLabel("appearance.color")), appearanceColorGroup));
         appearanceColorGroup.addAll(List.of(
                 colorVariationFactor,
+                rainDarkness,
+                thunderDarkness,
                 shaderPresetGUI.gamma,
                 shaderPresetGUI.dayBrightness,
                 shaderPresetGUI.nightBrightness,

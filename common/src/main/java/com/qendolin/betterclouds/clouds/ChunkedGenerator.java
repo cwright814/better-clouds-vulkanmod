@@ -51,10 +51,16 @@ public class ChunkedGenerator implements AutoCloseable {
         pointCache = options.useSamplerCaching ? new ChunkCache(gridWidth * gridWidth + gridWidth * 2) : new DummyCache();
     }
 
-    private static int calcBufferSize(Config options) {
+    private int calcBufferSize(Config options) {
         int distance = options.blockDistance();
-        int size = Mth.floor(distance / options.spacing) + Mth.ceil(distance / options.spacing);
-        return size > 0 ? size : 8 * 16;
+        // The grid goes from -gridMin to gridMax, spanning roughly distance / spacing * 2.
+        // It expands to multiples of chunkSize, which can add up to 2 * chunkSize.
+        int gridSpan = (int) Math.ceil((double) distance / options.spacing) * 2;
+        gridSpan += options.chunkSize * 2;
+        // The buffer capacity is size * size. We need capacity for (gridSpan * gridSpan) cells.
+        // Since each cell can have 2 passes (2 clouds), we need size * size >= gridSpan * gridSpan * 2
+        // So size should be gridSpan * sqrt(2), ~gridSpan * 1.5
+        return (int) (gridSpan * 1.5f);
     }
 
     private static int floorCloudChunk(double coord, int chunkSize) {
@@ -402,6 +408,14 @@ public class ChunkedGenerator implements AutoCloseable {
         }
 
         public void run() {
+            try {
+                runInternal();
+            } catch (Throwable t) {
+                BetterCloudsStatic.getLogger().error("Error while generating clouds", t);
+            }
+        }
+
+        private void runInternal() {
             synchronized (this) {
                 if (ran.getAndSet(true) || cancelled.get()) return;
             }
@@ -415,8 +429,8 @@ public class ChunkedGenerator implements AutoCloseable {
             int gridMax = Mth.ceil(distance / spacing);
 
             // relative sample-grid chunks generated for this task
-            int chunkMin = roundToMultiple(gridMin, options.chunkSize);
-            int chunkMax = roundToMultiple(gridMax, options.chunkSize);
+            int chunkMin = roundToMultipleDown(gridMin, options.chunkSize);
+            int chunkMax = roundToMultipleUp(gridMax, options.chunkSize);
 
             // global/world sample-grid origin of this task's origin chunk
             int gridOriginX = Mth.floor((chunkX * options.chunkSize) / spacing);
@@ -521,9 +535,20 @@ public class ChunkedGenerator implements AutoCloseable {
                         if (pass == 1) cloudHeight *= -0.3f;
 
                         // global/world block coordinates for cached sample points
-                        float x = sampleX + generator.sampler.randomOffsetX(sampleX, sampleZ, pass) * options.randomPlacement * spacing;
-                        float y = cloudHeight + options.yOffset;
-                        float z = sampleZ + generator.sampler.randomOffsetZ(sampleX, sampleZ, pass) * options.randomPlacement * spacing;
+                        float exactX = globalGridX * spacing;
+                        float exactZ = globalGridZ * spacing;
+                        float x = exactX + generator.sampler.randomOffsetX(sampleX, sampleZ, pass) * options.randomPlacement * spacing;
+                        
+                        // Add a deterministic offset to prevent Z-fighting between overlapping clouds.
+                        // Increased from 0.005f to 0.03f to overcome 24-bit depth precision limits at long distances.
+                        float zFightOffset = (Math.abs(sampleX * 3) % 10 + Math.abs(sampleZ * 7) % 10) * 0.03f;
+                        float y = cloudHeight + options.yOffset + zFightOffset;
+                        
+                        float zFightOffsetX = (Math.abs(sampleZ * 5) % 10) * 0.015f;
+                        float zFightOffsetZ = (Math.abs(sampleX * 9) % 10) * 0.015f;
+                        
+                        float z = exactZ + generator.sampler.randomOffsetZ(sampleX, sampleZ, pass) * options.randomPlacement * spacing + zFightOffsetZ;
+                        x += zFightOffsetX;
 
                         AABB pointAABB = new AABB(x, y, z, x, y, z);
                         bounds = bounds != null ? bounds.minmax(pointAABB) : pointAABB;
@@ -538,8 +563,12 @@ public class ChunkedGenerator implements AutoCloseable {
             return new SamplePoints(bounds, points);
         }
 
-        private int roundToMultiple(int n, int base) {
+        private int roundToMultipleDown(int n, int base) {
             return Math.floorDiv(n, base) * base;
+        }
+
+        private int roundToMultipleUp(int n, int base) {
+            return (int) Math.ceil((double) n / base) * base;
         }
     }
 

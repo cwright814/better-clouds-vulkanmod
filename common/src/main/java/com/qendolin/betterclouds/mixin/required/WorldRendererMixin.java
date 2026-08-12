@@ -70,6 +70,11 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
         return better_clouds$cloudRenderer;
     }
 
+    @Override
+    public com.qendolin.betterclouds.clouds.vulkan.VulkanRenderer betterclouds$getVulkanRenderer() {
+        return better_clouds$vulkanRenderer;
+    }
+
     @Inject(at = @At("TAIL"), method = "onResourceManagerReload(Lnet/minecraft/server/packs/resources/ResourceManager;)V", require = 0)
     private void onReload(ResourceManager manager, CallbackInfo ci) {
         if (!BetterClouds.isInitialized()) return;

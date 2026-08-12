@@ -72,6 +72,10 @@ public class Config {
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
+    public float rainDarkness = 0.4f;
+    @SerialEntry
+    public float thunderDarkness = 0.3f;
+    @SerialEntry
     public float fogRangeFactor = 1f;
     @SerialEntry
     public float fogEndFactor = 1f;

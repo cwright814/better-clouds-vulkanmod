@@ -32,7 +32,7 @@ layout(binding = 0) uniform CloudUBO {
     vec3 u_origin_offset;
     float u_time;
     
-    vec3 u_miscellaneous;
+    vec4 u_miscellaneous;
     float u_noise_factor;
     
     vec3 u_sun_axis;

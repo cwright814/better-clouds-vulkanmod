@@ -45,6 +45,8 @@ public class VulkanRenderer implements AutoCloseable {
     private Matrix4f mvpMatrix = new Matrix4f();
     private Matrix4f dhMatrix = new Matrix4f();
     private long lastSeed = 0L;
+    private float lastSizeXZ = -1;
+    private float lastSizeY = -1;
 
     public Renderer.PrepareResult prepare(Matrix4f viewMat, Matrix4f projMat, int ticks, float tickDelta, Vector3d cam) {
         long currentSeed = getWorldSeed();
@@ -57,6 +59,14 @@ public class VulkanRenderer implements AutoCloseable {
         projMatrix.set(projMat);
         
         com.qendolin.betterclouds.config.Config config = com.qendolin.betterclouds.config.ConfigManager.instance();
+        float currentSizeXZ = config.sizeXZ;
+        float currentSizeY = config.sizeY;
+        if (currentSizeXZ != lastSizeXZ || currentSizeY != lastSizeY) {
+            lastSizeXZ = currentSizeXZ;
+            lastSizeY = currentSizeY;
+            res.reloadShaders(client.getResourceManager());
+        }
+
         res.generator.reallocateIfStale(config, true);
 
         float cloudiness = com.qendolin.betterclouds.clouds.CloudinessProvider.getCloudiness(client.level, tickDelta);
@@ -125,11 +135,20 @@ public class VulkanRenderer implements AutoCloseable {
             (float) -res.generator.renderOriginZ(cam.z)
         ));
         res.shader.setUniformFloat("u_time", time);
-        res.shader.setUniformVec3("u_miscellaneous", new org.joml.Vector3f(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor));
+        res.shader.setUniformVec4("u_miscellaneous", new org.joml.Vector4f(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor, config.yOffset));
         res.shader.setUniformFloat("u_noise_factor", config.colorVariationFactor);
         res.shader.setUniformVec3("u_sun_axis", sunAxis);
+        float rain = client.level.getRainLevel(tickDelta);
+        float thunder = client.level.getThunderLevel(tickDelta);
+        float darknessMult = 1.0f - (rain * config.rainDarkness) - (thunder * config.thunderDarkness);
+        darknessMult = Math.max(0.1f, darknessMult);
+        
         res.shader.setUniformVec3("u_opacity", new org.joml.Vector3f(config.shaderPreset().opacity, config.shaderPreset().opacityFactor, config.shaderPreset().opacityExponent));
-        res.shader.setUniformVec3("u_tint", new org.joml.Vector3f(config.shaderPreset().tintRed, config.shaderPreset().tintGreen, config.shaderPreset().tintBlue));
+        res.shader.setUniformVec3("u_tint", new org.joml.Vector3f(
+                config.shaderPreset().tintRed * darknessMult,
+                config.shaderPreset().tintGreen * darknessMult,
+                config.shaderPreset().tintBlue * darknessMult
+        ));
         res.shader.setUniformVec2("u_fog_range", new org.joml.Vector2f(config.blockDistance() * 0.8f, config.blockDistance()));
         res.shader.setUniformVec2("u_depth_range", new org.joml.Vector2f(0.1f, 1000.0f));
 
