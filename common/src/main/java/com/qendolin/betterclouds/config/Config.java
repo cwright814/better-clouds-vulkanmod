@@ -74,6 +74,8 @@ public class Config {
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
+    public float edgeSoftness = 1.0f;
+    @SerialEntry
     public float rainDarkness = 0.55f;
     @SerialEntry
     public float thunderDarkness = 0.35f;

@@ -138,7 +138,7 @@ public class VulkanRenderer implements AutoCloseable {
         res.shader.setUniformVec3("u_sun_axis", sunAxis);
         res.shader.setUniformVec4("u_moon_direction", moonDir);
         res.shader.setUniformVec3("u_moon_axis", moonAxis);
-        res.shader.setUniformVec4("u_color_grading", new org.joml.Vector4f(brightness, 1f / config.shaderPreset().gamma(), 0.0f, config.shaderPreset().saturation));
+        res.shader.setUniformVec4("u_color_grading", new org.joml.Vector4f(brightness, 1f / config.shaderPreset().gamma(), config.edgeSoftness, config.shaderPreset().saturation));
         res.shader.setUniformVec3("u_origin_offset", new org.joml.Vector3f(
             (float) -res.generator.renderOriginX(cam.x),
             (float) (cam.y - cloudsHeight),

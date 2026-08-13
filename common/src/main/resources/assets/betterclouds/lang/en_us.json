@@ -22,6 +22,8 @@
   "betterclouds.config.entry.description" : "What percentage of cloud cubes will have a second cube placed below them to fill the bottom face of the cloud",
   "betterclouds.config.entry.distance" : "Distance",
   "betterclouds.config.entry.distance.description" : "A factor of the regular view distance",
+  "betterclouds.config.entry.edgeSoftness" : "Edge Softness",
+  "betterclouds.config.entry.edgeSoftness.description" : "How much the edges of clouds are softened",
   "betterclouds.config.entry.enabled" : "Enabled",
   "betterclouds.config.entry.enabled.description" : "Enable/Disable §cB§6e§et§at§3e§9r §cC§6l§eo§au§3d§9s§r",
   "betterclouds.config.entry.enabled.false" : "§4Vanilla§r",

@@ -47,6 +47,7 @@ public class ConfigGUI {
     public final Option<Float> sizeXZ;
     public final Option<Float> sizeY;
     public final Option<Float> scaleFalloffMin;
+    public final Option<Float> edgeSoftness;
     public final Option<Float> rainDarkness;
     public final Option<Float> thunderDarkness;
     public final Option<Float> travelSpeed;
@@ -155,6 +156,10 @@ public class ConfigGUI {
                 .build();
         this.scaleFalloffMin = createOption(float.class, "scaleFalloffMin")
                 .binding(defaults.scaleFalloffMin, () -> config.scaleFalloffMin, val -> config.scaleFalloffMin = val)
+                .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
+                .build();
+        this.edgeSoftness = createOption(float.class, "edgeSoftness")
+                .binding(defaults.edgeSoftness, () -> config.edgeSoftness, val -> config.edgeSoftness = val)
                 .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
                 .build();
         this.rainDarkness = createOption(float.class, "rainDarkness")
@@ -280,6 +285,7 @@ public class ConfigGUI {
                 .name(groupLabel("appearance.visibility")), appearanceVisibilityGroup));
         appearanceVisibilityGroup.addAll(List.of(
                 enabled,
+                edgeSoftness,
                 shaderPresetGUI.opacity,
                 shaderPresetGUI.opacityFactor,
                 shaderPresetGUI.opacityExponent,
