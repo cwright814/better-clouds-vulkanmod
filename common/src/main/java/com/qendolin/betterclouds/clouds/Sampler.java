@@ -116,13 +116,16 @@ public class Sampler {
         double value;
 
         // Shift coordinates slightly to avoid artifacts at the exact noise origin (0,0)
-        double nx = x / scale / 128f + 0.5f;
-        double nz = z / scale / 128f + 0.5f;
+        double nx = (double) x / scale / 128.0 + 0.5;
+        double nz = (double) z / scale / 128.0 + 0.5;
 
         // TODO: A vanilla like cloud distribution is not possible with this function
         if (detailNoises.size() > 1) {
-            double regionNoiseValue = (regionNoise.getValue(x / REGION_SIZE + 0.5f, z / REGION_SIZE + 0.5f) * 0.5 + 0.5) * detailNoises.size();
+            double regionNoiseValue = (regionNoise.getValue((double) x / REGION_SIZE + 0.5, (double) z / REGION_SIZE + 0.5) * 0.5 + 0.5) * detailNoises.size();
             int noiseInd = (int) regionNoiseValue;
+            // Prevent OutOfBounds just in case regionNoiseValue hits exactly 1.0
+            if (noiseInd >= detailNoises.size()) noiseInd = detailNoises.size() - 1;
+            if (noiseInd < 0) noiseInd = 0;
             PerlinSimplexNoise noise1 = detailNoises.get(noiseInd), noise2 = detailNoises.get((noiseInd + 1) % detailNoises.size());
 
             value = Mth.lerp(
@@ -136,7 +139,7 @@ public class Sampler {
 
         value = value / 2 + 0.5;
         value = (value - (1 - cloudiness)) / cloudiness;
-        value *= smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, coverageNoise.getValue(x / 1024f + 0.5f, z / 1024f + 0.5f));
+        value *= smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, coverageNoise.getValue((double) x / 1024.0 + 0.5, (double) z / 1024.0 + 0.5));
 
         float random = hashToFloat(seed, 'B', x, z);
         if (random > value + (BASE_FUZZINESS - fuzziness)) value = 0;
