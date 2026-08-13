@@ -10,11 +10,11 @@ public class ShaderPresetConfig extends AbstractPresetConfig {
     @SerialEntry
     public float upscaleResolutionFactor = 1f;
     @SerialEntry
-    public float gamma = 1f;
+    public float gamma = 0.84999985f;
     @SerialEntry
-    public float sunPathAngle = 0f;
+    public float sunPathAngle = -6.0f;
     @SerialEntry
-    public float moonPathAngle = 0f;
+    public float moonPathAngle = -20.0f;
     @SerialEntry
     public int sunriseStartTime = -785;
     @SerialEntry
@@ -26,19 +26,19 @@ public class ShaderPresetConfig extends AbstractPresetConfig {
     @SerialEntry
     public float dayBrightness = 1f;
     @SerialEntry
-    public float nightBrightness = 1f;
+    public float nightBrightness = 0.5f;
     @SerialEntry
     public float saturation = 1f;
     @SerialEntry
-    public float opacity = 0.2f;
+    public float opacity = 0.12f;
     @SerialEntry
-    public float opacityFactor = 1f;
+    public float opacityFactor = 0.75f;
     @SerialEntry
     public float opacityExponent = 1.5f;
     @SerialEntry
-    public float tintRed = 1f;
+    public float tintRed = 0.81960785f;
     @SerialEntry
-    public float tintGreen = 1f;
+    public float tintGreen = 0.8745098f;
     @SerialEntry
     public float tintBlue = 1f;
     @SerialEntry

@@ -42,23 +42,23 @@ public class Config {
     @SerialEntry
     public float fuzziness = 1.0f;
     @SerialEntry
-    public float yRange = 64f;
+    public float yRange = 128f;
     @SerialEntry
     public float yOffset = 0f;
     @SerialEntry
-    public float zFightOffsetMultiplier = 1.0f;
+    public float zFightOffsetMultiplier = 8.0f;
     @SerialEntry
-    public float bottomSparsity = 0f;
+    public float bottomSparsity = 0.75f;
     @SerialEntry
-    public float sparsity = 0f;
+    public float sparsity = 0.25f;
     @SerialEntry
     public float spacing = 5.25f;
     @SerialEntry
-    public float sizeXZ = 16f;
+    public float sizeXZ = 32f;
     @SerialEntry
-    public float sizeY = 8f;
+    public float sizeY = 12f;
     @SerialEntry
-    public float travelSpeed = 0.03f;
+    public float travelSpeed = 0.06f;
     @SerialEntry
     public float windEffectFactor = 1.0f;
     @SerialEntry
@@ -70,13 +70,13 @@ public class Config {
     @SerialEntry
     public int chunkSize = 32;
     @SerialEntry
-    public float samplingScale = 1;
+    public float samplingScale = 0.37f;
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
-    public float rainDarkness = 0.4f;
+    public float rainDarkness = 0.55f;
     @SerialEntry
-    public float thunderDarkness = 0.3f;
+    public float thunderDarkness = 0.35f;
     @SerialEntry
     public float fogRangeFactor = 1f;
     @SerialEntry
