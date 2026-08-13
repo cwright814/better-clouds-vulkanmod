@@ -58,7 +58,7 @@ public class Config {
     @SerialEntry
     public float sizeY = 12f;
     @SerialEntry
-    public float travelSpeed = 0.06f;
+    public float travelSpeed = 2.0f;
     @SerialEntry
     public float windEffectFactor = 1.0f;
     @SerialEntry
