@@ -90,7 +90,7 @@ tasks.named<ProcessResources>("processResources") {
             "version" to project.version,
             "loader" to loader,
     )
-    props["mc_version_range"] = "\">=26.1.2 <26.3-\""
+    props["mc_version_range"] = "\"26.1.2\""
 
     inputs.properties(props)
 
