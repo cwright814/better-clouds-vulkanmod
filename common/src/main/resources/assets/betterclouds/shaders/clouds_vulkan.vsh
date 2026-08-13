@@ -50,7 +50,7 @@ layout(binding = 0) uniform CloudUBO {
 layout(binding = 1) uniform sampler2D u_noise_texture;
 
 layout (location = 0) flat out float pass_opacity;
-layout (location = 1) out vec3 pass_color;
+layout (location = 1) out vec4 pass_color;
 layout (location = 2) out vec3 pass_dir;
 #if DISTANT_HORIZONS
 layout (location = 3) out float pass_dh_depth;
@@ -125,6 +125,7 @@ void main() {
     vec3 vertexPos = scale * in_vert + cloudPos;
     vec3 localWorldVertexPos = vertexPos - u_origin_offset;
 
+    // Due to the limited max depth this can sometimes result in issues but they're barely visible
     pass_color.r = linearFogFade(length(localWorldVertexPos.xyz), u_fog_range.x, u_fog_range.y);
 
     #if POSITIONAL_COLORING
@@ -133,6 +134,10 @@ void main() {
     pass_color.g = 1.0;
     #endif
     pass_color.b = bilinearTexture(u_noise_texture, localWorldPosition.xz / 1024.0).g;
+    
+    float yRange = u_bounding_box.w - _SIZE_Y_;
+    float densityValue = in_pos.y >= 0.0 ? sqrt(max(in_pos.y, 0.0) / yRange) : sqrt(max(-in_pos.y, 0.0) / (yRange * 0.3));
+    pass_color.a = mix(0.3, 1.7, densityValue);
 
     pass_dir = localWorldVertexPos;
 

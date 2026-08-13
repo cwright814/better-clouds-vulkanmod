@@ -10,7 +10,7 @@ const float dither_matrix[16] = float[](
 );
 
 layout (location = 0) flat in float pass_opacity;
-layout (location = 1) in vec3 pass_color;
+layout (location = 1) in vec4 pass_color;
 layout (location = 2) in vec3 pass_dir;
 #if DISTANT_HORIZONS
 layout (location = 3) in float pass_dh_depth;
@@ -81,7 +81,8 @@ void main() {
         discard;
     }
 
-    vec3 cloudData = pass_color;
+    vec3 cloudData = pass_color.rgb;
+    float density_multiplier = pass_color.a;
     
     // Coverage and final alpha are computed at the end of the shader
 
@@ -146,4 +147,6 @@ void main() {
     out_color.a *= cloudData.r;
     out_color.a *= pass_opacity; // fade
     
+    // Apply density multiplier for edges/filling experiment
+    out_color.a = clamp(out_color.a * density_multiplier, 0.0, 1.0);
 }
