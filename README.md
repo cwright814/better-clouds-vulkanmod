@@ -42,7 +42,7 @@ To run this specific fork of Better Clouds, you must use the following mod setup
 
 ## Distant Horizons Compatibility
 
-This mod natively supports rendering underneath Distant Horizons' LODs! To use Distant Horizons alongside VulkanMod and Beryl in Minecraft v26.1.2, make sure to use [our specially patched fork of Distant Horizons](https://github.com/cwright814/DistantHorizons).
+This mod natively supports rendering underneath Distant Horizons' LODs! To use Distant Horizons alongside VulkanMod and Beryl in Minecraft v26.1.2, make sure to use [our specially patched fork of Distant Horizons](https://github.com/cwright814/distant-horizons-vulkanmod).
 
 ## Download
 
