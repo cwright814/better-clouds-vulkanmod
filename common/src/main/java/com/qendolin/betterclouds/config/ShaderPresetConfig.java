@@ -10,7 +10,7 @@ public class ShaderPresetConfig extends AbstractPresetConfig {
     @SerialEntry
     public float upscaleResolutionFactor = 1f;
     @SerialEntry
-    public float gamma = 0.84999985f;
+    public float gamma = 0.85f;
     @SerialEntry
     public float sunPathAngle = -6.0f;
     @SerialEntry
