@@ -1,4 +1,4 @@
-# Better Clouds for VulkanMod + Beryl (Minecraft v26.1.x)
+# Better Clouds for VulkanMod + Beryl (v26.1.x)
 
 ![Better Clouds with VulkanMod](assets/better-clouds.png)
 
