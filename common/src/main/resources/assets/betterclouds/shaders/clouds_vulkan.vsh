@@ -137,7 +137,7 @@ void main() {
     
     float yRange = u_bounding_box.w - _SIZE_Y_;
     float densityValue = in_pos.y >= 0.0 ? sqrt(max(in_pos.y, 0.0) / yRange) : sqrt(max(-in_pos.y, 0.0) / (yRange * 0.3));
-    float densityMultiplier = mix(0.3, 1.7, densityValue);
+    float densityMultiplier = mix(0.3, 2.0, densityValue);
     pass_color.a = mix(1.0, densityMultiplier, u_color_grading.z);
 
     pass_dir = localWorldVertexPos;
