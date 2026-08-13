@@ -2,7 +2,7 @@
 set -e
 
 echo "Building fabric mod..."
-JAVA_HOME=~/.jdks/graalvm-25.1.3+9.1 ./gradlew clean :fabric:build
+JAVA_HOME=~/.jdks/graalvm-25.1.3+9.1 GRADLE_OPTS="--enable-native-access=ALL-UNNAMED" ./gradlew clean :fabric:build
 
 echo "Copying to sandbox directory..."
 # Use find to locate the exact jar (ignoring -sources.jar) and copy it
