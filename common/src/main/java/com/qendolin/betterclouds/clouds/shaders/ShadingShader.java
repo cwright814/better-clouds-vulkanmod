@@ -22,6 +22,8 @@ public class ShadingShader extends Shader {
     public final Uniform uVPMatrix;
     public final Uniform uSunDirection;
     public final Uniform uSunAxis;
+    public final Uniform uMoonDirection;
+    public final Uniform uMoonAxis;
     public final Uniform uColorGrading;
     public final Uniform uOpacity;
     public final Uniform uTint;
@@ -37,6 +39,8 @@ public class ShadingShader extends Shader {
         uVPMatrix = getUniform("u_vp_matrix", false);
         uSunDirection = getUniform("u_sun_direction", true);
         uSunAxis = getUniform("u_sun_axis", true);
+        uMoonDirection = getUniform("u_moon_direction", true);
+        uMoonAxis = getUniform("u_moon_axis", true);
         uColorGrading = getUniform("u_color_grading", true);
         uOpacity = getUniform("u_opacity", true);
         uTint = getUniform("u_tint", true);

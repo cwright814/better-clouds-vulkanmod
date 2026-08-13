@@ -14,6 +14,8 @@ public class ShaderPresetConfig extends AbstractPresetConfig {
     @SerialEntry
     public float sunPathAngle = 0f;
     @SerialEntry
+    public float moonPathAngle = 0f;
+    @SerialEntry
     public int sunriseStartTime = -785;
     @SerialEntry
     public int sunriseEndTime = 1163;

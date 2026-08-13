@@ -19,12 +19,14 @@ layout (location = 3) in float pass_dh_depth;
 layout (location = 0) out vec4 out_color;
 
 layout(binding = 0) uniform CloudUBO {
+    // Matrices
     mat4 u_vp_matrix;
     mat4 u_mv_matrix;
     mat4 u_mc_p_matrix;
     mat4 u_dh_p_matrix;
     mat4 u_mvp_matrix;
     
+    // Vectors
     vec4 u_bounding_box;
     vec4 u_sun_direction;
     vec4 u_color_grading;
@@ -33,13 +35,17 @@ layout(binding = 0) uniform CloudUBO {
     float u_time;
     
     vec4 u_miscellaneous;
-    float u_noise_factor;
     
     vec3 u_sun_axis;
-    float u_is_fancy;
+    float u_noise_factor;
     
     vec3 u_opacity;
-    float padding2;
+    float u_is_fancy;
+    
+    vec4 u_moon_direction;
+    
+    vec3 u_moon_axis;
+    float padding4;
     
     vec3 u_tint;
     float padding3;
@@ -80,14 +86,27 @@ void main() {
     // Coverage and final alpha are computed at the end of the shader
 
     vec3 sun_dir = u_sun_direction.xyz;
+    vec3 moon_dir = u_moon_direction.xyz;
     vec3 frag_dir = normalize(pass_dir);
 
-    vec3 xz_proj = frag_dir - sun_dir * dot(frag_dir, sun_dir);
-    float proj_angle = acos(dot(normalize(xz_proj), u_sun_axis));
-
-    float sphere = dot(sun_dir, frag_dir);
+    float sphere_sun = dot(sun_dir, frag_dir);
+    float sphere_moon = dot(moon_dir, frag_dir);
     
-    float superellipse_falloff = dot(sun_dir, frag_dir);
+    bool is_sun = sphere_sun > sphere_moon;
+    vec3 active_dir = is_sun ? sun_dir : moon_dir;
+    vec3 active_axis = is_sun ? u_sun_axis : u_moon_axis;
+    
+    vec3 xz_proj = frag_dir - active_dir * dot(frag_dir, active_dir);
+    float proj_angle = 0.0;
+    if (length(xz_proj) > 0.0001) {
+        proj_angle = acos(clamp(dot(normalize(xz_proj), active_axis), -1.0, 1.0));
+    }
+
+    float sphere = dot(active_dir, frag_dir);
+    if (!is_sun) sphere = -sphere; // Negate so the shader uses the moon side of the texture
+    
+    float superellipse_falloff = dot(active_dir, frag_dir);
+    if (!is_sun) superellipse_falloff = -superellipse_falloff;
     const float superellipse_size = 3.0;
     float superellipse = (
     (1.0 + (1.0 / 3.0) * (pow(sin(2.0 * proj_angle + pi / 2.0), 2.0)))

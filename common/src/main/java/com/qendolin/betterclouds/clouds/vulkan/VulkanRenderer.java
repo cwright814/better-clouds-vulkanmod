@@ -91,27 +91,34 @@ public class VulkanRenderer implements AutoCloseable {
         float cloudsHeight = client.level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.CLOUD_HEIGHT, new net.minecraft.world.phys.Vec3(cam.x, cam.y, cam.z));
         Matrix4f mvMatrix = new Matrix4f(viewMatrix);
         // BetterClouds fix for translation
-        mvMatrix.m30(0); mvMatrix.m31(0); mvMatrix.m32(0); mvMatrix.m33(1);
+        mvMatrix.m30(0); mvMatrix.m31(0); mvMatrix.m32(0); mvMatrix.m33(0);
         mvMatrix.m23(0); mvMatrix.m13(0); mvMatrix.m03(0);
         
         mvMatrix.translate((float) res.generator.renderOriginX(cam.x), (float) (cloudsHeight - cam.y), (float) res.generator.renderOriginZ(cam.z));
+        mvMatrix.m33(1);
+        
         mvpMatrix.set(projMatrix).mul(mvMatrix);
 
         // Calculate uniforms
         float sunAngle = com.qendolin.betterclouds.clouds.EffectTintProvider.getSunAngleRadians(client.level, cam);
         long skyTime = client.level.getOverworldClockTime() % 24000L;
-        float skyAngleRad = com.qendolin.betterclouds.clouds.EffectTintProvider.getSunAngleRadians(client.level, cam);
+        float mappedTime = com.qendolin.betterclouds.util.MathUtil.mapTimeOfDay(skyTime, config.shaderPreset().sunriseStartTime, config.shaderPreset().sunriseEndTime, config.shaderPreset().sunsetStartTime, config.shaderPreset().sunsetEndTime);
         float dayNightFactor = com.qendolin.betterclouds.util.MathUtil.interpolateDayNightFactor(skyTime, config.shaderPreset().sunriseStartTime, config.shaderPreset().sunriseEndTime, config.shaderPreset().sunsetStartTime, config.shaderPreset().sunsetEndTime);
         float brightness = (1.0f - dayNightFactor) * config.shaderPreset().nightBrightness + dayNightFactor * config.shaderPreset().dayBrightness;
-        float mappedTime = com.qendolin.betterclouds.util.MathUtil.mapTimeOfDay(skyTime, config.shaderPreset().sunriseStartTime, config.shaderPreset().sunriseEndTime, config.shaderPreset().sunsetStartTime, config.shaderPreset().sunsetEndTime);
 
         float sunPathAngleRad = config.shaderPreset().sunPathAngle * net.minecraft.util.Mth.DEG_TO_RAD;
-        org.joml.Vector3d realSunDir = new org.joml.Vector3d(0, 1, 0).rotateX(sunPathAngleRad).rotateZ(skyAngleRad).normalize();
-        org.joml.Vector4f sunDir = new org.joml.Vector4f((float)realSunDir.x, (float)realSunDir.y, (float)realSunDir.z, mappedTime / 24000f);
-        
         float sunAxisY = (float) Math.sin(sunPathAngleRad);
         float sunAxisZ = (float) Math.cos(sunPathAngleRad);
-        org.joml.Vector3f sunAxis = new org.joml.Vector3f(0.0f, sunAxisY, sunAxisZ).normalize();
+        org.joml.Vector3f sunAxis = new org.joml.Vector3f(0, sunAxisY, sunAxisZ);
+        org.joml.Vector3f realSunDir = new org.joml.Vector3f(1, 0, 0).rotateAxis(sunAngle + net.minecraft.util.Mth.HALF_PI, 0, sunAxisY, sunAxisZ);
+        org.joml.Vector4f sunDir = new org.joml.Vector4f(realSunDir.x, realSunDir.y, realSunDir.z, mappedTime / 24000f);
+
+        float moonPathAngleRad = config.shaderPreset().moonPathAngle * net.minecraft.util.Mth.DEG_TO_RAD;
+        float moonAxisY = (float) Math.sin(moonPathAngleRad);
+        float moonAxisZ = (float) Math.cos(moonPathAngleRad);
+        org.joml.Vector3f moonAxis = new org.joml.Vector3f(0, moonAxisY, moonAxisZ);
+        org.joml.Vector3f realMoonDir = new org.joml.Vector3f(-1, 0, 0).rotateAxis(sunAngle + net.minecraft.util.Mth.HALF_PI, 0, moonAxisY, moonAxisZ);
+        org.joml.Vector4f moonDir = new org.joml.Vector4f(realMoonDir.x, realMoonDir.y, realMoonDir.z, 0.0f);
         
         float time = ((float) client.level.getGameTime() + tickDelta) / 20.0f;
         res.shader.setUniformFloat("u_time", time);
@@ -128,6 +135,9 @@ public class VulkanRenderer implements AutoCloseable {
                 config.yRange + config.sizeY
         ));
         res.shader.setUniformVec4("u_sun_direction", sunDir);
+        res.shader.setUniformVec3("u_sun_axis", sunAxis);
+        res.shader.setUniformVec4("u_moon_direction", moonDir);
+        res.shader.setUniformVec3("u_moon_axis", moonAxis);
         res.shader.setUniformVec4("u_color_grading", new org.joml.Vector4f(brightness, 1f / config.shaderPreset().gamma(), 0.0f, config.shaderPreset().saturation));
         res.shader.setUniformVec3("u_origin_offset", new org.joml.Vector3f(
             (float) -res.generator.renderOriginX(cam.x),
@@ -137,7 +147,6 @@ public class VulkanRenderer implements AutoCloseable {
         res.shader.setUniformFloat("u_time", time);
         res.shader.setUniformVec4("u_miscellaneous", new org.joml.Vector4f(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor, config.yOffset));
         res.shader.setUniformFloat("u_noise_factor", config.colorVariationFactor);
-        res.shader.setUniformVec3("u_sun_axis", sunAxis);
         float rain = client.level.getRainLevel(tickDelta);
         float thunder = client.level.getThunderLevel(tickDelta);
         float darknessMult = 1.0f - (rain * config.rainDarkness) - (thunder * config.thunderDarkness);

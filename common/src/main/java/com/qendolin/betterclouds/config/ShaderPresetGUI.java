@@ -27,6 +27,7 @@ public class ShaderPresetGUI {
     public final Option<Float> opacityFactor;
     public final Option<Float> opacityExponent;
     public final Option<Float> sunPathAngle;
+    public final Option<Float> moonPathAngle;
     public final Option<Float> upscaleResolutionFactor;
     public final Option<Integer> selectedPreset;
     public final Option<String> presetTitle;
@@ -141,6 +142,10 @@ public class ShaderPresetGUI {
                 .binding(defaults.shaderPreset().sunPathAngle, () -> config.shaderPreset().sunPathAngle, val -> config.shaderPreset().sunPathAngle = val)
                 .customController(opt -> new FloatSliderController(opt, -60f, 60f, 1f, ConfigGUI::formatAsDegrees))
                 .build();
+        this.moonPathAngle = createOption(float.class, "moonPathAngle")
+                .binding(defaults.shaderPreset().moonPathAngle, () -> config.shaderPreset().moonPathAngle, val -> config.shaderPreset().moonPathAngle = val)
+                .customController(opt -> new FloatSliderController(opt, -60f, 60f, 1f, ConfigGUI::formatAsDegrees))
+                .build();
         this.opacityFactor = createOption(float.class, "opacityFactor")
                 .binding(defaults.shaderPreset().opacityFactor, () -> config.shaderPreset().opacityFactor, val -> config.shaderPreset().opacityFactor = val)
                 .customController(opt -> new FloatSliderController(opt, 0, 1, 0.01f, ConfigGUI::formatAsPercent))
@@ -175,6 +180,7 @@ public class ShaderPresetGUI {
                 sunsetEndTime,
                 upscaleResolutionFactor,
                 sunPathAngle,
+                moonPathAngle,
                 opacityFactor,
                 opacityExponent,
                 opacity,
@@ -237,7 +243,8 @@ public class ShaderPresetGUI {
                 gamma,
                 dayBrightness,
                 nightBrightness,
-                sunPathAngle
+                sunPathAngle,
+                moonPathAngle
         ));
 
         shadersCategory.add(new Tuple<>(OptionGroup.createBuilder()
@@ -275,6 +282,7 @@ public class ShaderPresetGUI {
                 .name(groupLabel("shaders.technical")), shadersTechnicalGroup));
         shadersTechnicalGroup.addAll(List.of(
                 sunPathAngle,
+                moonPathAngle,
                 sunriseStartTime,
                 sunriseEndTime,
                 sunsetStartTime,

@@ -27,11 +27,13 @@ uniform mat4 u_mvp_matrix;
 #endif
 // x, y, z offset to the local origin
 uniform vec3 u_origin_offset;
+// chunk offset for absolute world position calculation
+uniform vec2 u_chunk_offset;
 // x, z offset to the world origin
 // width, height of the bounding box
 uniform vec4 u_bounding_box;
-// scale falloff minimum, dynamic scale factor, dynamic scale speed
-uniform vec3 u_miscellaneous;
+// scale falloff minimum, dynamic scale factor, dynamic scale speed, y offset
+uniform vec4 u_miscellaneous;
 uniform float u_time;
 // start, end
 uniform vec2 u_fog_range;
@@ -45,9 +47,10 @@ float linearFogFade(float distance, float fog_start, float fog_end) {
 }
 
 void main() {
-    vec3 localWorldPosition = in_pos - u_origin_offset;// in world space but anchored to the camera
+    vec3 absolute_pos = in_pos + vec3(u_chunk_offset.x, 0.0, u_chunk_offset.y);
+    vec3 localWorldPosition = absolute_pos - u_origin_offset;// in world space but anchored to the camera
     float scaleFalloff = mix(1.0, u_miscellaneous.x, pow(length(localWorldPosition.xz), 2.0) / pow(u_bounding_box.z, 2.0));
-    vec3 cloudPos = in_pos;// in world space but anchored to the chunk grid
+    vec3 cloudPos = absolute_pos;// in world space but anchored to the chunk grid
     cloudPos.y *= scaleFalloff;
 
     pass_opacity = smoothstep(NEAR_VISIBILITY_START, NEAR_VISIBILITY_END, length(localWorldPosition));
@@ -57,7 +60,8 @@ void main() {
     float waveScale = texture(u_noise_texture, (localWorldPosition.xz + u_bounding_box.xy) / 4000.0 + vec2(u_miscellaneous.z * u_time / 800.0)).r;
     float smallWaves = texture(u_noise_texture, (localWorldPosition.zx + u_bounding_box.yx) / 1000.0 + vec2(u_miscellaneous.z * u_time / 200.0)).r * 1.8 - 0.9;
     waveScale = mix(mix(waveScale, 1.0, max(smallWaves, 0.0)), 0.0, max(-smallWaves, 0.0));
-    float fDynScale = 1.0 - smoothstep(0.0, u_bounding_box.w / 4.0, in_pos.y + 0.5);
+    float cloudHeight = absolute_pos.y - u_miscellaneous.w;
+    float fDynScale = 1.0 - smoothstep(0.0, u_bounding_box.w / 4.0, cloudHeight + 0.5);
     float dynScale = mix(1.0, waveScale, fDynScale * u_miscellaneous.y);
     vec3 scale = SIZE * dynScale * scaleFalloff;
 
@@ -68,7 +72,7 @@ void main() {
     pass_color.r = linearFogFade(length(localWorldVertexPos.xyz), u_fog_range.x, u_fog_range.y);
 
     #if POSITIONAL_COLORING
-    pass_color.g = (scale.y * 0.625 * (in_vert.y + 0.375) + in_pos.y) / (u_bounding_box.w);
+    pass_color.g = (scale.y * 0.625 * (in_vert.y + 0.375) + absolute_pos.y) / (u_bounding_box.w);
     #else
     pass_color.g = 1.0;
     #endif

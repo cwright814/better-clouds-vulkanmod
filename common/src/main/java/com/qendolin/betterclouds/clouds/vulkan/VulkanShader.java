@@ -24,8 +24,8 @@ public class VulkanShader {
         builder.setShaderSrc(SPIRVUtils.ShaderKind.FRAGMENT_SHADER, fshSrc);
 
         net.vulkanmod.vulkan.shader.layout.AlignedStruct.Builder structBuilder = new net.vulkanmod.vulkan.shader.layout.AlignedStruct.Builder();
-        String[] types = {"mat4", "mat4", "mat4", "mat4", "mat4", "vec4", "vec4", "vec4", "vec3", "float", "vec4", "float", "vec3", "float", "vec3", "float", "vec3", "float", "vec2", "vec2"};
-        String[] names = {"u_vp_matrix", "u_mv_matrix", "u_mc_p_matrix", "u_dh_p_matrix", "u_mvp_matrix", "u_bounding_box", "u_sun_direction", "u_color_grading", "u_origin_offset", "u_time", "u_miscellaneous", "u_noise_factor", "u_sun_axis", "u_is_fancy", "u_opacity", "padding2", "u_tint", "padding3", "u_fog_range", "u_depth_range"};
+        String[] types = {"mat4", "mat4", "mat4", "mat4", "mat4", "vec4", "vec4", "vec4", "vec3", "float", "vec4", "vec3", "float", "vec3", "float", "vec4", "vec3", "float", "vec3", "float", "vec2", "vec2"};
+        String[] names = {"u_vp_matrix", "u_mv_matrix", "u_mc_p_matrix", "u_dh_p_matrix", "u_mvp_matrix", "u_bounding_box", "u_sun_direction", "u_color_grading", "u_origin_offset", "u_time", "u_miscellaneous", "u_sun_axis", "u_noise_factor", "u_opacity", "u_is_fancy", "u_moon_direction", "u_moon_axis", "padding4", "u_tint", "padding3", "u_fog_range", "u_depth_range"};
 
         for (int i = 0; i < types.length; i++) {
             net.vulkanmod.vulkan.shader.layout.Uniform.Info info = net.vulkanmod.vulkan.shader.layout.Uniform.createUniformInfo(types[i], names[i]);

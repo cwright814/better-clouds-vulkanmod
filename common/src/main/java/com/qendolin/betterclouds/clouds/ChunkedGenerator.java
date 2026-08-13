@@ -534,7 +534,6 @@ public class ChunkedGenerator implements AutoCloseable {
                         // so the cube is placed below the normal cloud y range, like this:
                         if (pass == 1) cloudHeight *= -0.3f;
 
-                        // global/world block coordinates for cached sample points
                         float exactX = globalGridX * spacing;
                         float exactZ = globalGridZ * spacing;
                         float x = exactX + generator.sampler.randomOffsetX(sampleX, sampleZ, pass) * options.randomPlacement * spacing;

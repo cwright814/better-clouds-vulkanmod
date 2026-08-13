@@ -25,6 +25,8 @@ uniform sampler2D u_light_texture;
 uniform vec4 u_sun_direction;
 // x, y, z
 uniform vec3 u_sun_axis;
+uniform vec4 u_moon_direction;
+uniform vec3 u_moon_axis;
 // opacity, opacity factor, opacity exponent
 uniform vec3 u_opacity;
 // brightness, gamma, unused, saturation
@@ -62,17 +64,30 @@ void main() {
     out_color.a = pow(coverage, u_opacity.z) / (1.0 / (u_opacity.x) + pow(coverage, u_opacity.z) - 1.0);
 
     vec3 sun_dir = u_sun_direction.xyz;
+    vec3 moon_dir = u_moon_direction.xyz;
     vec3 frag_dir = normalize(pass_dir);
 
-    vec3 xz_proj = frag_dir - sun_dir * dot(frag_dir, sun_dir);
-    float proj_angle = acos(dot(normalize(xz_proj), u_sun_axis));
+    float sphere_sun = dot(sun_dir, frag_dir);
+    float sphere_moon = dot(moon_dir, frag_dir);
+    
+    bool is_sun = sphere_sun > sphere_moon;
+    vec3 active_dir = is_sun ? sun_dir : moon_dir;
+    vec3 active_axis = is_sun ? u_sun_axis : u_moon_axis;
+    
+    vec3 xz_proj = frag_dir - active_dir * dot(frag_dir, active_dir);
+    float proj_angle = 0.0;
+    if (length(xz_proj) > 0.0001) {
+        proj_angle = acos(clamp(dot(normalize(xz_proj), active_axis), -1.0, 1.0));
+    }
 
-    // if sunDir.z is always 0, this can be optimized, but who cares
-    float sphere = dot(sun_dir, frag_dir);
+    float sphere = dot(active_dir, frag_dir);
+    if (!is_sun) sphere = -sphere;
+
 
     #if CELESTIAL_BODY_HALO
     // TODO: document how I arrived at this formula
-    float superellipse_falloff = dot(sun_dir, frag_dir);
+    float superellipse_falloff = dot(active_dir, frag_dir);
+    if (!is_sun) superellipse_falloff = -superellipse_falloff;
     // Higher values -> smaller size
     const float superellipse_size = 3.0;
     float superellipse = (

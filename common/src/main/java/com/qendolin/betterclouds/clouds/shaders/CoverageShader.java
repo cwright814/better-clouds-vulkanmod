@@ -26,6 +26,7 @@ public class CoverageShader extends Shader {
     public final Uniform uMcPMatrix;
     public final Uniform uDhPMatrix;
     public final Uniform uOriginOffset;
+    public final Uniform uChunkOffset;
     public final Uniform uBoundingBox;
     public final Uniform uTime;
     public final Uniform uMiscellaneous;
@@ -43,6 +44,7 @@ public class CoverageShader extends Shader {
         uMcPMatrix = getUniform("u_mc_p_matrix", false);
         uDhPMatrix = getUniform("u_dh_p_matrix", false);
         uOriginOffset = getUniform("u_origin_offset", false);
+        uChunkOffset = getUniform("u_chunk_offset", false);
         uTime = getUniform("u_time", false);
         uBoundingBox = getUniform("u_bounding_box", false);
         uMiscellaneous = getUniform("u_miscellaneous", true);

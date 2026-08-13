@@ -318,7 +318,7 @@ public class Renderer implements AutoCloseable {
         res.coverageShader().uOriginOffset.setVec3((float) -res.generator().renderOriginX(cam.x), (float) cam.y - cloudsHeight, (float) -res.generator().renderOriginZ(cam.z));
         res.coverageShader().uBoundingBox.setVec4((float) cam.x, (float) cam.z, generatorConfig.blockDistance() - generatorConfig.chunkSize / 2f, generatorConfig.yRange + config.sizeY);
         res.coverageShader().uTime.setFloat(ticks / 20);
-        res.coverageShader().uMiscellaneous.setVec3(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor);
+        res.coverageShader().uMiscellaneous.setVec4(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor, config.yOffset);
         if (fog == null) { // Fog off
             res.coverageShader().uFogRange.setVec2(config.blockDistance() - 8, config.blockDistance());
         } else {
@@ -472,7 +472,13 @@ public class Renderer implements AutoCloseable {
         float brightness = (1 - dayNightFactor) * config.shaderPreset().nightBrightness + dayNightFactor * config.shaderPreset().dayBrightness;
         float sunAxisY = Mth.sin(sunPathAngleRad);
         float sunAxisZ = Mth.cos(sunPathAngleRad);
-        Vector3f sunDir = tempVector.set(1, 0, 0).rotateAxis(skyAngleRad + Mth.HALF_PI, 0, sunAxisY, sunAxisZ);
+        Vector3f sunDir = new Vector3f(1, 0, 0).rotateAxis(skyAngleRad + Mth.HALF_PI, 0, sunAxisY, sunAxisZ);
+
+        float moonPathAngleRad = config.shaderPreset().moonPathAngle * Mth.DEG_TO_RAD;
+        float moonAxisY = Mth.sin(moonPathAngleRad);
+        float moonAxisZ = Mth.cos(moonPathAngleRad);
+        Vector3f moonDir = new Vector3f(-1, 0, 0).rotateAxis(skyAngleRad + Mth.HALF_PI, 0, moonAxisY, moonAxisZ);
+
         float dayTime = world.getOverworldClockTime() % 24000;
         float mappedTime = MathUtil.mapTimeOfDay(dayTime, config.shaderPreset().sunriseStartTime, config.shaderPreset().sunriseEndTime, config.shaderPreset().sunsetStartTime, config.shaderPreset().sunsetEndTime);
 
@@ -480,6 +486,8 @@ public class Renderer implements AutoCloseable {
         res.shadingShader().uVPMatrix.setMat4(rotationProjectionMatrix);
         res.shadingShader().uSunDirection.setVec4(sunDir.x, sunDir.y, sunDir.z, mappedTime / 24000f);
         res.shadingShader().uSunAxis.setVec3(0, sunAxisY, sunAxisZ);
+        res.shadingShader().uMoonDirection.setVec4(moonDir.x, moonDir.y, moonDir.z, 0.0f);
+        res.shadingShader().uMoonAxis.setVec3(0, moonAxisY, moonAxisZ);
         res.shadingShader().uOpacity.setVec3(config.shaderPreset().opacity, config.shaderPreset().opacityFactor, config.shaderPreset().opacityExponent);
         res.shadingShader().uColorGrading.setVec4(brightness, 1f / config.shaderPreset().gamma(), 0.0f, config.shaderPreset().saturation);
         res.shadingShader().uTint.setVec3(config.shaderPreset().tintRed * effectTint.x, config.shaderPreset().tintGreen * effectTint.y, config.shaderPreset().tintBlue * effectTint.z);

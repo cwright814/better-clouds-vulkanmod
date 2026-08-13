@@ -28,13 +28,17 @@ layout(binding = 0) uniform CloudUBO {
     float u_time;
     
     vec4 u_miscellaneous;
-    float u_noise_factor;
     
     vec3 u_sun_axis;
-    float u_is_fancy;
+    float u_noise_factor;
     
     vec3 u_opacity;
-    float padding2;
+    float u_is_fancy;
+    
+    vec4 u_moon_direction;
+    
+    vec3 u_moon_axis;
+    float padding4;
     
     vec3 u_tint;
     float padding3;
