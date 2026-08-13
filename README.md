@@ -24,14 +24,13 @@ Minecraft.
 
 ## Features
 
-- Adds simple volumetric clouds that doesn't clash with the style of the rest of the game.
-- Cloud appearance is highly customizable; practically every option can be changed. Go wild!
-- Built-in shader presets to make the clouds look good. Supports Complementary, BSL, Chocapic, Kappa, Rethinking Voxels,
-  and Solas.
-- Cloud generation is customizable via resource packs.
-- Built-in compatibility with visual mods, such as Iris, Serene Seasons, and more!
-- Performs just as well or potentially even better than vanilla cloud rendering.
-- Available for Fabric and NeoForge.
+- **VulkanMod Native:** Fully re-engineered shader pipeline built specifically for VulkanMod, utilizing optimized uniform buffers (`std140` UBOs) for massive performance gains over vanilla rendering.
+- **Dynamic Density Opacity:** Custom GPU-side shader math smoothly blends the transparency of wispy cloud edges while keeping dense internal clusters prominent and opaque.
+- **Atmospheric Weather States:** Takes full advantage of the new density rendering to make rainy and thundering weather states look visually distinct and impactful at any time of day.
+- **Precision Noise Generation:** Overhauled the underlying noise samplers with double-precision math to eliminate visual artifacts and Moiré ("Farlands") patterns at extreme render distances.
+- **Highly Customizable:** From edge softness and density multipliers to travel speeds and wind effects—practically every visual and performance metric is exposed directly through the Mod Menu.
+- **Dynamic Mod Compatibility:** Works beautifully with dynamic weather systems like Serene Seasons and Fabric Seasons to automatically adjust cloud coverage and density.
+- **Vanilla Aligned:** Adds gorgeous volumetric, multi-layered clouds that still feel right at home with Minecraft's blocky aesthetic!
 
 ## Download
 
