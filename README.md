@@ -32,6 +32,14 @@ Minecraft.
 - **Dynamic Mod Compatibility:** Works beautifully with dynamic weather systems like Serene Seasons and Fabric Seasons to automatically adjust cloud coverage and density.
 - **Vanilla Aligned:** Adds gorgeous volumetric, multi-layered clouds that still feel right at home with Minecraft's blocky aesthetic!
 
+## Requirements
+
+To run this specific fork of Better Clouds, you must use the following mod setup:
+- **Minecraft:** v26.1.2
+- **Mod Loader:** Fabric
+- **VulkanMod:** v0.6.8
+- **Beryl:** v0.2.1
+
 ## Download
 
 [Download Better Clouds on Modrinth](https://modrinth.com/mod/better-clouds)
