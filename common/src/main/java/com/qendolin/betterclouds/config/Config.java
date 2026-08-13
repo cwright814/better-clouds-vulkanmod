@@ -46,7 +46,7 @@ public class Config {
     @SerialEntry
     public float yOffset = 0f;
     @SerialEntry
-    public float zFightOffsetMultiplier = 8.0f;
+    public float zFightOffsetMultiplier = 10.0f;
     @SerialEntry
     public float bottomSparsity = 0.75f;
     @SerialEntry
@@ -70,7 +70,7 @@ public class Config {
     @SerialEntry
     public int chunkSize = 32;
     @SerialEntry
-    public float samplingScale = 0.37f;
+    public float samplingScale = 1.2f;
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
