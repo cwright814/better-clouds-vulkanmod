@@ -48,6 +48,8 @@ public class ConfigGUI {
     public final Option<Float> sizeY;
     public final Option<Float> scaleFalloffMin;
     public final Option<Float> edgeSoftness;
+    public final Option<Float> densityEdgeMultiplier;
+    public final Option<Float> densityCenterMultiplier;
     public final Option<Float> rainDarkness;
     public final Option<Float> thunderDarkness;
     public final Option<Float> travelSpeed;
@@ -161,6 +163,14 @@ public class ConfigGUI {
         this.edgeSoftness = createOption(float.class, "edgeSoftness")
                 .binding(defaults.edgeSoftness, () -> config.edgeSoftness, val -> config.edgeSoftness = val)
                 .customController(opt -> new FloatSliderController(opt, 0, 1, 0.05f, ConfigGUI::formatAsPercent))
+                .build();
+        this.densityEdgeMultiplier = createOption(float.class, "densityEdgeMultiplier")
+                .binding(defaults.densityEdgeMultiplier, () -> config.densityEdgeMultiplier, val -> config.densityEdgeMultiplier = val)
+                .customController(opt -> new FloatSliderController(opt, 0.1f, 10.0f, 0.1f, ConfigGUI::formatAsTimes))
+                .build();
+        this.densityCenterMultiplier = createOption(float.class, "densityCenterMultiplier")
+                .binding(defaults.densityCenterMultiplier, () -> config.densityCenterMultiplier, val -> config.densityCenterMultiplier = val)
+                .customController(opt -> new FloatSliderController(opt, 0.1f, 10.0f, 0.1f, ConfigGUI::formatAsTimes))
                 .build();
         this.rainDarkness = createOption(float.class, "rainDarkness")
                 .binding(defaults.rainDarkness, () -> config.rainDarkness, val -> config.rainDarkness = val)
@@ -286,6 +296,8 @@ public class ConfigGUI {
         appearanceVisibilityGroup.addAll(List.of(
                 enabled,
                 edgeSoftness,
+                densityEdgeMultiplier,
+                densityCenterMultiplier,
                 shaderPresetGUI.opacity,
                 shaderPresetGUI.opacityFactor,
                 shaderPresetGUI.opacityExponent,

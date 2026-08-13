@@ -45,10 +45,10 @@ layout(binding = 0) uniform CloudUBO {
     vec4 u_moon_direction;
     
     vec3 u_moon_axis;
-    float padding4;
+    float u_density_edge;
     
     vec3 u_tint;
-    float padding3;
+    float u_density_center;
     
     vec2 u_fog_range;
     vec2 u_depth_range;

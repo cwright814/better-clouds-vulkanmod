@@ -76,6 +76,10 @@ public class Config {
     @SerialEntry
     public float edgeSoftness = 1.0f;
     @SerialEntry
+    public float densityEdgeMultiplier = 0.3f;
+    @SerialEntry
+    public float densityCenterMultiplier = 2.0f;
+    @SerialEntry
     public float rainDarkness = 0.55f;
     @SerialEntry
     public float thunderDarkness = 0.35f;

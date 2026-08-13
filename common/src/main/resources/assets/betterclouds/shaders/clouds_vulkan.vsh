@@ -38,10 +38,10 @@ layout(binding = 0) uniform CloudUBO {
     vec4 u_moon_direction;
     
     vec3 u_moon_axis;
-    float padding4;
+    float u_density_edge;
     
     vec3 u_tint;
-    float padding3;
+    float u_density_center;
     
     vec2 u_fog_range;
     vec2 u_depth_range;
@@ -137,7 +137,7 @@ void main() {
     
     float yRange = u_bounding_box.w - _SIZE_Y_;
     float densityValue = in_pos.y >= 0.0 ? sqrt(max(in_pos.y, 0.0) / yRange) : sqrt(max(-in_pos.y, 0.0) / (yRange * 0.3));
-    float densityMultiplier = mix(0.3, 2.0, densityValue);
+    float densityMultiplier = mix(u_density_edge, u_density_center, densityValue);
     pass_color.a = mix(1.0, densityMultiplier, u_color_grading.z);
 
     pass_dir = localWorldVertexPos;
