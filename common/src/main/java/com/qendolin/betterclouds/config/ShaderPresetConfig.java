@@ -30,7 +30,7 @@ public class ShaderPresetConfig extends AbstractPresetConfig {
     @SerialEntry
     public float saturation = 1f;
     @SerialEntry
-    public float opacity = 0.12f;
+    public float opacity = 0.06f;
     @SerialEntry
     public float opacityFactor = 0.75f;
     @SerialEntry

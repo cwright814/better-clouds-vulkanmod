@@ -40,7 +40,7 @@ public class Config {
     @SerialEntry
     public float randomPlacement = 1.0f;
     @SerialEntry
-    public float fuzziness = 1.0f;
+    public float fuzziness = 0.86f;
     @SerialEntry
     public float yRange = 128f;
     @SerialEntry
@@ -70,19 +70,19 @@ public class Config {
     @SerialEntry
     public int chunkSize = 32;
     @SerialEntry
-    public float samplingScale = 1.2f;
+    public float samplingScale = 2.0f;
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
     public float edgeSoftness = 1.0f;
     @SerialEntry
-    public float densityEdgeMultiplier = 0.3f;
+    public float densityEdgeMultiplier = 0.1f;
     @SerialEntry
-    public float densityCenterMultiplier = 2.0f;
+    public float densityCenterMultiplier = 4.0f;
     @SerialEntry
-    public float rainDarkness = 0.55f;
+    public float rainDarkness = 0.2f;
     @SerialEntry
-    public float thunderDarkness = 0.35f;
+    public float thunderDarkness = 0.65f;
     @SerialEntry
     public float fogRangeFactor = 1f;
     @SerialEntry
@@ -113,7 +113,7 @@ public class Config {
     public List<NoisePresetConfig> noisePresets = new ArrayList<>();
 
     @SerialEntry
-    public boolean gpuIncompatibleMessageEnabled = true;
+    public boolean gpuIncompatibleMessageEnabled = false;
     @SerialEntry
     public List<ResourceKey<DimensionType>> enabledDimensions = new ArrayList<>(getDefaultDimensions());
     @SerialEntry
