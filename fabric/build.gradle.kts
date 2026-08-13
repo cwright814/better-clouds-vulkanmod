@@ -14,7 +14,7 @@ val mcVersion = rootProject.extra["mcVersion"].toString()
 val buildVersionString: (String) -> String by rootProject.extra
 val commonSourceSets = project(":common").extensions.getByType<SourceSetContainer>()
 
-version = buildVersionString(loader)
+version = buildVersionString(loader).replace("26.2-pre-2", "26.1.2")
 
 loom {
     accessWidenerPath.set(project(":common").file("src/main/resources/betterclouds.accesswidener"))
