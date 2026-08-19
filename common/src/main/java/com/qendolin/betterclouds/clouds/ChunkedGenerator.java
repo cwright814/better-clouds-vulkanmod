@@ -431,25 +431,30 @@ public class ChunkedGenerator implements AutoCloseable {
             int gridMin = -Mth.floor(distance / spacing);
             int gridMax = Mth.ceil(distance / spacing);
 
-            // relative sample-grid chunks generated for this task
-            int chunkMin = roundToMultipleDown(gridMin, options.chunkSize);
-            int chunkMax = roundToMultipleUp(gridMax, options.chunkSize);
-
             // global/world sample-grid origin of this task's origin chunk
-            int gridOriginX = Mth.floor((chunkX * options.chunkSize) / spacing);
-            int gridOriginZ = Mth.floor((chunkZ * options.chunkSize) / spacing);
+            int gridOriginX = Mth.floor((this.chunkX * options.chunkSize) / spacing);
+            int gridOriginZ = Mth.floor((this.chunkZ * options.chunkSize) / spacing);
+
+            int globalGridMinX = gridOriginX + gridMin;
+            int globalGridMaxX = gridOriginX + gridMax;
+            int globalGridMinZ = gridOriginZ + gridMin;
+            int globalGridMaxZ = gridOriginZ + gridMax;
+
+            int globalChunkMinX = roundToMultipleDown(globalGridMinX, options.chunkSize);
+            int globalChunkMaxX = roundToMultipleUp(globalGridMaxX, options.chunkSize);
+            int globalChunkMinZ = roundToMultipleDown(globalGridMinZ, options.chunkSize);
+            int globalChunkMaxZ = roundToMultipleUp(globalGridMaxZ, options.chunkSize);
 
             generator.buffer.clear();
             cacheHit = 0;
             cacheMiss = 0;
 
-            // The outer loop generates chunks
-            for (int chunkX = chunkMin; chunkX < chunkMax; chunkX += options.chunkSize) {
-                for (int chunkZ = chunkMin; chunkZ < chunkMax; chunkZ += options.chunkSize) {
+            // The outer loop generates chunks aligned perfectly to the global grid,
+            // preventing the cache from storing shifted bounds when the player moves.
+            for (int globalChunkX = globalChunkMinX; globalChunkX < globalChunkMaxX; globalChunkX += options.chunkSize) {
+                for (int globalChunkZ = globalChunkMinZ; globalChunkZ < globalChunkMaxZ; globalChunkZ += options.chunkSize) {
                     int chunkCloudIndex = cloudCount;
 
-                    int globalChunkX = chunkX + gridOriginX;
-                    int globalChunkZ = chunkZ + gridOriginZ;
                     long cacheKey = cacheHash(
                             Math.floorDiv(globalChunkX, options.chunkSize),
                             Math.floorDiv(globalChunkZ, options.chunkSize)
@@ -458,12 +463,7 @@ public class ChunkedGenerator implements AutoCloseable {
                     SamplePoints samplePoints = generator.pointCache.get(cacheKey);
                     if (samplePoints == null) {
                         cacheMiss++;
-                        samplePoints = genSamplePoints(
-                                chunkX, chunkZ,
-                                gridMin, gridMax,
-                                gridOriginX, gridOriginZ,
-                                spacing
-                        );
+                        samplePoints = genSamplePoints(globalChunkX, globalChunkZ, spacing);
                         generator.pointCache.put(cacheKey, samplePoints);
                     } else {
                         cacheHit++;
@@ -496,30 +496,18 @@ public class ChunkedGenerator implements AutoCloseable {
         }
 
         private @NonNull SamplePoints genSamplePoints(
-                int chunkX, int chunkZ,
-                int gridMin, int gridMax,
-                int gridOriginX, int gridOriginZ,
+                int globalChunkX, int globalChunkZ,
                 float spacing
         ) {
-            // Relative sample-grid bounds for this chunk, clipped to the task range
-            int chunkGridMinX = Math.max(chunkX, gridMin);
-            int chunkGridMinZ = Math.max(chunkZ, gridMin);
-            int chunkGridMaxX = Math.min(chunkX + options.chunkSize, gridMax);
-            int chunkGridMaxZ = Math.min(chunkZ + options.chunkSize, gridMax);
-
-            // global/world sample-grid chunk position for a stable cache key:
-            // chunkX + gridOriginX, chunkZ + gridOriginZ.
-
             AABB bounds = null;
 
             ObjectArrayList<AABB> points = new ObjectArrayList<>(100);
 
-            for (int gridX = chunkGridMinX; gridX < chunkGridMaxX; gridX++) {
-                for (int gridZ = chunkGridMinZ; gridZ < chunkGridMaxZ; gridZ++) {
-                    // global/world sample-grid coordinates
-                    int globalGridX = gridX + gridOriginX;
-                    int globalGridZ = gridZ + gridOriginZ;
+            int chunkGridMaxX = globalChunkX + options.chunkSize;
+            int chunkGridMaxZ = globalChunkZ + options.chunkSize;
 
+            for (int globalGridX = globalChunkX; globalGridX < chunkGridMaxX; globalGridX++) {
+                for (int globalGridZ = globalChunkZ; globalGridZ < chunkGridMaxZ; globalGridZ++) {
                     if (options.sparsity > 0 && Sampler.hashToFloat(generator.sampler.getSeed(), 'G', globalGridX, globalGridZ) < options.sparsity)
                         continue;
 
