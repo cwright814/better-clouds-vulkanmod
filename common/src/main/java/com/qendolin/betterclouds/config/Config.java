@@ -222,8 +222,20 @@ public class Config {
             selectedNoisePreset = noisePresets.indexOf(selected);
     }
 
+    public int maxBlockDistance() {
+        return Math.max(16, Minecraft.getInstance().options.cloudRange().get()) * 16;
+    }
+
     public int blockDistance() {
-        return Minecraft.getInstance().options.cloudRange().get() * 16;
+        int baseDistance = maxBlockDistance();
+        float weather = 0.0f;
+        if (Minecraft.getInstance().level != null) {
+            weather = Math.max(Minecraft.getInstance().level.getRainLevel(1.0f), Minecraft.getInstance().level.getThunderLevel(1.0f));
+        }
+        
+        // Shrink up to 60% of the distance during a full storm to prevent geometry overload/clipping
+        float shrinkFactor = 1.0f - (weather * 0.6f);
+        return (int) (baseDistance * shrinkFactor);
     }
 
     @Override

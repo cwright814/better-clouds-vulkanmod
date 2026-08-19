@@ -66,7 +66,7 @@ public class VulkanResources {
                        .replace("_DISTANT_HORIZONS_", distantHorizons)
                        .replace("_WORLD_CURVATURE_", worldCurvature);
 
-        shader.init(vshSrc, fshSrc);
+        shader.init(vshSrc, fshSrc, dhCompat);
         
         // Generator needs an empty reload trigger if any resources change?
     }
@@ -107,7 +107,7 @@ public class VulkanResources {
         int verticesPerInstance = fancy ? 36 : 6;
         
         int totalVertices = numInstances * verticesPerInstance;
-        int floatsPerVertex = 3; // in_pos(3)
+        int floatsPerVertex = 4; // in_pos(3) + padding(1) to match POSITION_COLOR (16 bytes)
         int requiredFloats = totalVertices * floatsPerVertex;
         int requiredBytes = requiredFloats * 4;
         
@@ -129,12 +129,28 @@ public class VulkanResources {
             
             for (int v = 0; v < verticesPerInstance; v++) {
                 // in_pos is just the cloud block coordinate
-                floatBuf.put(cx).put(cy).put(cz);
+                floatBuf.put(cx).put(cy).put(cz).put(0f);
             }
         }
         floatBuf.flip();
         expandedVbo.reset();
-        expandedVbo.copyBuffer(byteBuf, byteBuf.capacity());
+        
+        int maxUploadBytes = 60 * 1024 * 1024; // 60 MB chunks to fit in 64MB staging buffer
+        int offset = 0;
+        int bytesRemaining = requiredBytes;
+        
+        while (bytesRemaining > 0) {
+            int uploadSize = Math.min(bytesRemaining, maxUploadBytes);
+            byteBuf.position(offset);
+            byteBuf.limit(offset + uploadSize);
+            java.nio.ByteBuffer slice = byteBuf.slice();
+            
+            expandedVbo.copyBuffer(slice, uploadSize, offset);
+            
+            offset += uploadSize;
+            bytesRemaining -= uploadSize;
+        }
+        
         org.lwjgl.system.MemoryUtil.memFree(byteBuf);
     }
 }

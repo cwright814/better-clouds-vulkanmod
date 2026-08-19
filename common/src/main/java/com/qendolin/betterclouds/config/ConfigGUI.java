@@ -61,7 +61,7 @@ public class ConfigGUI {
     public final Option<Boolean> enabled;
     public final Option<Float> fogRangeFactor;
     public final Option<Float> fogEndFactor;
-    public final Option<Boolean> usePersistentBuffers;
+
     public final Option<Boolean> useFrustumCulling;
     public final Option<Boolean> useSamplerCaching;
 
@@ -106,7 +106,7 @@ public class ConfigGUI {
                 .instant(true)
                 .binding(defaultDistance,
                         () -> options.get().cloudRange().get(), val -> options.get().cloudRange().set(val))
-                .customController(opt -> new IntegerSliderController(opt, 1, Math.max(defaultDistance, 128), 1))
+                .customController(opt -> new IntegerSliderController(opt, 16, Math.max(defaultDistance, 128), 1))
                 .build();
         this.fuzziness = createOption(float.class, "fuzziness")
                 .binding(defaults.fuzziness, () -> config.fuzziness, val -> config.fuzziness = val)
@@ -212,10 +212,7 @@ public class ConfigGUI {
                 .binding(defaults.fogEndFactor, () -> config.fogEndFactor, val -> config.fogEndFactor = val)
                 .customController(opt -> new FloatSliderController(opt, 0.5f, 16.0f, 0.1f, ConfigGUI::formatAsTimes))
                 .build();
-        this.usePersistentBuffers = createOption(boolean.class, "usePersistentBuffers")
-                .binding(defaults.usePersistentBuffers, () -> config.usePersistentBuffers, val -> config.usePersistentBuffers = val)
-                .customController(TickBoxController::new)
-                .build();
+
         this.useFrustumCulling = createOption(boolean.class, "useFrustumCulling")
                 .binding(defaults.useFrustumCulling, () -> config.useFrustumCulling, val -> config.useFrustumCulling = val)
                 .customController(TickBoxController::new)
@@ -337,7 +334,7 @@ public class ConfigGUI {
 
         performanceCategory.add(new Tuple<>(OptionGroup.createBuilder()
                 .name(groupLabel("performance.technical")), performanceTechnicalGroup));
-        performanceTechnicalGroup.addAll(List.of(usePersistentBuffers, useFrustumCulling, useSamplerCaching));
+        performanceTechnicalGroup.addAll(List.of(useFrustumCulling, useSamplerCaching));
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
                 .name(categoryLabel("shaders")), shaderPresetGUI.shadersCategory));

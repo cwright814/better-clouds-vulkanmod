@@ -17,9 +17,9 @@ public class VulkanShader {
     // VK_SHADER_STAGE_VERTEX_BIT = 1, VK_SHADER_STAGE_FRAGMENT_BIT = 16 -> 17
     public static final int STAGE_ALL = 17;
 
-    public void init(String vshSrc, String fshSrc) {
+    public void init(String vshSrc, String fshSrc, boolean dhCompat) {
         Pipeline.Builder builder = new Pipeline.Builder(
-            com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION, "betterclouds");
+            com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR, "betterclouds");
         builder.setShaderSrc(SPIRVUtils.ShaderKind.VERTEX_SHADER, vshSrc);
         builder.setShaderSrc(SPIRVUtils.ShaderKind.FRAGMENT_SHADER, fshSrc);
 
@@ -39,6 +39,9 @@ public class VulkanShader {
         builder.addUBO(ubo);
         builder.addImageDescriptor(new net.vulkanmod.vulkan.shader.descriptor.ImageDescriptor(1, "sampler2D", "u_noise_texture", 1, 1));
         builder.addImageDescriptor(new net.vulkanmod.vulkan.shader.descriptor.ImageDescriptor(2, "sampler2D", "u_light_texture", 2, 1));
+        if (dhCompat) {
+            builder.addImageDescriptor(new net.vulkanmod.vulkan.shader.descriptor.ImageDescriptor(3, "sampler2D", "u_dh_depth_texture", 3, 1));
+        }
 
         pipeline = builder.createGraphicsPipeline();
     }

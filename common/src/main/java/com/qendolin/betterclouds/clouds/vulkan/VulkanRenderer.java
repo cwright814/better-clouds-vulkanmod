@@ -12,6 +12,10 @@ import com.qendolin.betterclouds.clouds.Renderer; // for PrepareResult
 import com.qendolin.betterclouds.duck.BiomeManagerDuck;
 
 public class VulkanRenderer implements AutoCloseable {
+    private static java.lang.reflect.Field rebindPassField;
+    private static java.lang.reflect.Field hdrFinalFramebufferField;
+    private static boolean reflectionInitialized = false;
+
     private final Minecraft client;
     private ClientLevel world = null;
     private VulkanResources res = new VulkanResources();
@@ -166,7 +170,12 @@ public class VulkanRenderer implements AutoCloseable {
         // Get drawer
         net.vulkanmod.vulkan.Drawer drawer = net.vulkanmod.vulkan.Renderer.getDrawer();
         net.vulkanmod.vulkan.Renderer renderer = net.vulkanmod.vulkan.Renderer.getInstance();
-        
+
+        // Save the active render pass. If the StagingBuffer overflows during mesh upload, 
+        // it will flush commands and forcefully kill the pass. We must restore it later.
+        net.vulkanmod.vulkan.framebuffer.RenderPass savedPass = renderer.getBoundRenderPass();
+        net.vulkanmod.vulkan.framebuffer.Framebuffer savedFbo = savedPass != null ? savedPass.getFramebuffer() : null;
+
         // Update expanded buffer
         com.qendolin.betterclouds.clouds.Buffer buffer = res.generator.buffer();
         java.nio.FloatBuffer drawBuffer = buffer != null ? buffer.getDrawBuffer() : null;
@@ -175,6 +184,45 @@ public class VulkanRenderer implements AutoCloseable {
             if (numClouds > 0) {
                 boolean fancy = client.options.cloudStatus().get() == net.minecraft.client.CloudStatus.FANCY;
                 res.updateExpandedBuffer(drawBuffer, numClouds, fancy);
+
+                // If the pass was killed by StagingBuffer or Vanilla weather, restart it!
+                if (renderer.getBoundRenderPass() == null) {
+                    if (savedPass != null && savedFbo != null) {
+                        // It was killed by our StagingBuffer flush. Restore it.
+                        renderer.setBoundFramebuffer(null);
+                        renderer.beginRenderPass(savedPass, savedFbo);
+                    } else {
+                        // It was killed by Vanilla weather + Beryl bug. Use reflection to rebuild.
+                        net.vulkanmod.vulkan.pass.MainPass mainPass = renderer.getMainPass();
+                        try {
+                            if (!reflectionInitialized) {
+                                rebindPassField = mainPass.getClass().getField("rebindPass");
+                                hdrFinalFramebufferField = mainPass.getClass().getField("hdrFinalFramebuffer");
+                                reflectionInitialized = true;
+                            }
+                            
+                            if (rebindPassField != null && hdrFinalFramebufferField != null) {
+                                net.vulkanmod.vulkan.framebuffer.RenderPass rebindPass = (net.vulkanmod.vulkan.framebuffer.RenderPass) rebindPassField.get(mainPass);
+                                net.vulkanmod.vulkan.framebuffer.Framebuffer fbo = (net.vulkanmod.vulkan.framebuffer.Framebuffer) hdrFinalFramebufferField.get(mainPass);
+                                
+                                if (rebindPass != null && fbo != null) {
+                                    if (rebindPass.getFramebuffer() == null) {
+                                        rebindPass.setFramebuffer(fbo); // Forcefully fix Beryl's broken pass
+                                    }
+                                    renderer.setBoundFramebuffer(null); // Ensure beginRenderPass doesn't skip
+                                    renderer.beginRenderPass(rebindPass, fbo);
+                                }
+                            }
+                        } catch (Exception e) {
+                            reflectionInitialized = true; // Don't keep trying if fields don't exist
+                        }
+                    }
+                }
+                
+                // Final sanity check before we send it to GraphicsPipeline
+                if (renderer.getBoundRenderPass() == null || renderer.getBoundRenderPass().getFramebuffer() == null) {
+                    return; // ABORT! Skip drawing clouds this frame so we don't crash.
+                }
 
                 org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_CULL_FACE);
                 org.lwjgl.opengl.GL11.glEnable(org.lwjgl.opengl.GL11.GL_BLEND);

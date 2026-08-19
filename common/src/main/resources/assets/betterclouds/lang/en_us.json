@@ -12,7 +12,7 @@
   "betterclouds.config.entry.celestialBodyHalo" : "Celestial Body Halo",
   "betterclouds.config.entry.celestialBodyHalo.description" : "A halo around the sun and moon, to simulate mie scattering",
   "betterclouds.config.entry.chunkSize" : "Chunk Size",
-  "betterclouds.config.entry.chunkSize.description" : "How many clouds are generated at once",
+  "betterclouds.config.entry.chunkSize.description" : "How many clouds are generated at once. STRONGLY RECOMMENDED TO LEAVE AT 32. Increasing this on VulkanMod will cause Staging Buffer chunking, which results in violent screen flashing every time the player crosses a chunk boundary.",
   "betterclouds.config.entry.cloudOverride" : "Always Render Clouds",
   "betterclouds.config.entry.cloudOverride.description" : "Render clouds regardless of the shader pack settings",
   "betterclouds.config.entry.colorVariationFactor" : "Color Variation Factor",

@@ -149,8 +149,9 @@ void main() {
     #if DISTANT_HORIZONS
     vec4 localPos = u_mv_matrix * vec4(vertexPos, 1.0);
     gl_Position = u_mc_p_matrix * localPos;
+    
     vec4 dhPos = u_dh_p_matrix * localPos;
-    pass_dh_depth = (dhPos.z / dhPos.w) * 0.5 + 0.5;
+    pass_dh_depth = (dhPos.z / dhPos.w);
     #else
     gl_Position = u_mvp_matrix * vec4(vertexPos, 1.0);
     #endif

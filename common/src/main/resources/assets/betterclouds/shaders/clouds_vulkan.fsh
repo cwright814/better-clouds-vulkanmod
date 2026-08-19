@@ -56,6 +56,10 @@ layout(binding = 0) uniform CloudUBO {
 
 layout(binding = 2) uniform sampler2D u_light_texture;
 
+#if DISTANT_HORIZONS
+layout(binding = 3) uniform sampler2D u_dh_depth_texture;
+#endif
+
 const float pi = 3.14159265359;
 const float sqrt2 = 1.41421356237;
 
@@ -73,6 +77,15 @@ vec4 bilinearTexture(sampler2D tex, vec2 uv) {
 }
 
 void main() {
+    #if DISTANT_HORIZONS
+    if (pass_dh_depth != -1.0) {
+        float dh_depth = texelFetch(u_dh_depth_texture, ivec2(gl_FragCoord.xy), 0).r;
+        if (pass_dh_depth < dh_depth) {
+            discard;
+        }
+    }
+    #endif
+
     int x = int(gl_FragCoord.x) % 4;
     int y = int(gl_FragCoord.y) % 4;
     int index = x + y * 4;

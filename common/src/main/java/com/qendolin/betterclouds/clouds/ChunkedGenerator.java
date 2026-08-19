@@ -46,13 +46,16 @@ public class ChunkedGenerator implements AutoCloseable {
         this.seed = seed;
 
         Config options = ConfigManager.instance();
-        int gridWidth = (int) (options.blockDistance() / options.spacing / options.chunkSize * 2);
+        int gridWidth = (int) (options.maxBlockDistance() / options.spacing / options.chunkSize * 2);
         // default capacity: number of chunks in the grid + some extra for when camera position changes
         pointCache = options.useSamplerCaching ? new ChunkCache(gridWidth * gridWidth + gridWidth * 2) : new DummyCache();
     }
 
     private int calcBufferSize(Config options) {
-        int distance = options.blockDistance();
+        // Pad the physical memory buffer to a minimum of 128 chunks.
+        // This prevents the buffer from constantly reallocating and flashing the screen
+        // when the user dynamically adjusts the render distance slider.
+        int distance = Math.max(options.maxBlockDistance(), 128 * 16);
         // The grid goes from -gridMin to gridMax, spanning roughly distance / spacing * 2.
         // It expands to multiples of chunkSize, which can add up to 2 * chunkSize.
         int gridSpan = (int) Math.ceil((double) distance / options.spacing) * 2;
@@ -421,7 +424,7 @@ public class ChunkedGenerator implements AutoCloseable {
             }
             startTime = Util.getMillis();
 
-            int distance = options.blockDistance();
+            int distance = (int) this.distance;
             float spacing = options.spacing;
 
             // relative sample-grid range centered around this task's origin chunk

@@ -18,6 +18,16 @@ public abstract class BetterCloudsStatic {
     protected static boolean initialized = false;
     protected static boolean initializedEarly = false;
 
+    private static Runnable lateRenderTask;
+
+    public static void setLateRenderTask(Runnable task) {
+        lateRenderTask = task;
+    }
+
+    public static Runnable getLateRenderTask() {
+        return lateRenderTask;
+    }
+
     public static boolean isInitialized() {
         return initialized;
     }

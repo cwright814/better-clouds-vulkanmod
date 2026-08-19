@@ -74,8 +74,82 @@ public abstract class DistantHorizonsSharedCompatImpl extends DistantHorizonsCom
 
     abstract float[] getDhProjectionMatrixValues(DhApiRenderParam renderParam);
 
+    private static boolean reflectionInitialized = false;
+    private static java.lang.reflect.Field activeIntegrationField;
+    private static java.lang.reflect.Method getBackendMethod;
+    private static java.lang.reflect.Method getDhFramebufferMethod;
+    private static java.lang.reflect.Method getFramebufferMethod;
+    private static java.lang.reflect.Method getDepthAttachmentMethod;
+    private static java.lang.reflect.Method getTextureMethod;
+    private static java.lang.reflect.Method getIdMethod;
+
     @Override
     public Optional<Integer> getDepthTextureId() {
+        if (!reflectionInitialized) {
+            try {
+                Class<?> entrypointClass = Class.forName("com.braffolk.dhvulkan.DhVulkanModEntrypoint");
+                activeIntegrationField = entrypointClass.getDeclaredField("activeIntegration");
+                activeIntegrationField.setAccessible(true);
+                
+                Object activeIntegration = activeIntegrationField.get(null);
+                if (activeIntegration != null) {
+                    getBackendMethod = activeIntegration.getClass().getMethod("getBackend");
+                    Object backend = getBackendMethod.invoke(activeIntegration);
+                    if (backend != null && backend.getClass().getName().equals("com.braffolk.dhvulkan.core.VulkanRenderEngine")) {
+                        getDhFramebufferMethod = backend.getClass().getMethod("getDhFramebuffer");
+                        Object dhFramebuffer = getDhFramebufferMethod.invoke(backend);
+                        if (dhFramebuffer != null) {
+                            getFramebufferMethod = dhFramebuffer.getClass().getMethod("getFramebuffer");
+                            Object framebuffer = getFramebufferMethod.invoke(dhFramebuffer);
+                            if (framebuffer != null) {
+                                getDepthAttachmentMethod = framebuffer.getClass().getMethod("getDepthAttachment");
+                                Object depthAttachment = getDepthAttachmentMethod.invoke(framebuffer);
+                                if (depthAttachment != null) {
+                                    getTextureMethod = depthAttachment.getClass().getMethod("getTexture");
+                                    Object texture = getTextureMethod.invoke(depthAttachment);
+                                    if (texture != null) {
+                                        getIdMethod = texture.getClass().getMethod("getId");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+            reflectionInitialized = true;
+        }
+
+        try {
+            if (activeIntegrationField != null && getBackendMethod != null && getDhFramebufferMethod != null && 
+                getFramebufferMethod != null && getDepthAttachmentMethod != null && getTextureMethod != null && getIdMethod != null) {
+                
+                Object activeIntegration = activeIntegrationField.get(null);
+                if (activeIntegration != null) {
+                    Object backend = getBackendMethod.invoke(activeIntegration);
+                    if (backend != null) {
+                        Object dhFramebuffer = getDhFramebufferMethod.invoke(backend);
+                        if (dhFramebuffer != null) {
+                            Object framebuffer = getFramebufferMethod.invoke(dhFramebuffer);
+                            if (framebuffer != null) {
+                                Object depthAttachment = getDepthAttachmentMethod.invoke(framebuffer);
+                                if (depthAttachment != null) {
+                                    Object texture = getTextureMethod.invoke(depthAttachment);
+                                    if (texture != null) {
+                                        int id = (Integer) getIdMethod.invoke(texture);
+                                        return Optional.of(id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Fallthrough
+        }
+
         DhApiResult<Integer> result = DhApi.Delayed.renderProxy.getDhDepthTextureId();
         if (result.success) {
             return Optional.of(result.payload);

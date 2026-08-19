@@ -40,7 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.qendolin.betterclouds.compat.GLCompat.glCompat;
 import static com.qendolin.betterclouds.compat.ProfilerWrapper.getProfiler;
 
-@Mixin(value = LevelRenderer.class, priority = 900)
+@Mixin(value = LevelRenderer.class, priority = 500)
 public abstract class WorldRendererMixin implements WorldRendererDuck {
 
     @Unique
@@ -174,19 +174,13 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
 
         // Note to self: do not use return
         if (prepareResult == Renderer.PrepareResult.RENDER) {
-            var renderPass = frameGraphBuilder.addPass("clouds");
-            if (targets.clouds != null) {
-                targets.clouds = renderPass.readsAndWrites(targets.clouds);
-            } else {
-                targets.main = renderPass.readsAndWrites(targets.main);
-            }
-
             final var fticks = ticks;
             final var ftickDelta = tickDelta;
             final var fcam = cam;
             final var ffrustumPos = cam;
             final var ffrustum = frustum;
-            renderPass.executes(() -> {
+            
+            Runnable renderTask = () -> {
                 getProfiler().push("clouds");
                 glCompat.pushDebugGroupDev("Better Clouds");
                 if (better_clouds$vulkanRenderer != null) {
@@ -196,7 +190,18 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
                 }
                 getProfiler().pop();
                 glCompat.popDebugGroupDev();
-            });
+            };
+
+            if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+                BetterCloudsStatic.setLateRenderTask(renderTask);
+            } else {
+                if (targets.clouds != null) {
+                    var renderPass = frameGraphBuilder.addPass("clouds");
+                    targets.clouds = renderPass.readsAndWrites(targets.clouds);
+                    renderPass.reads(targets.main);
+                    renderPass.executes(renderTask::run);
+                }
+            }
         }
 
         getProfiler().pop();
