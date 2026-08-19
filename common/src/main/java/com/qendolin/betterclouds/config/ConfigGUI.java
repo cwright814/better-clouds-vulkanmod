@@ -59,6 +59,10 @@ public class ConfigGUI {
     public final Option<Boolean> celestialBodyHalo;
 
     public final Option<Boolean> enabled;
+    public final Option<Boolean> shadowsEnabled;
+    public final Option<Integer> shadowUpdateRate;
+    public final Option<Integer> shadowWorldLoadDelay;
+    public final Option<Integer> shadowMaxTimePerIteration;
     public final Option<Float> fogRangeFactor;
     public final Option<Float> fogEndFactor;
 
@@ -204,6 +208,22 @@ public class ConfigGUI {
                 .binding(defaults.enabled, () -> config.enabled, val -> config.enabled = val)
                 .customController(opt -> new BooleanController(opt, val -> Component.translatable(LANG_KEY_PREFIX + ".entry.enabled." + val), false))
                 .build();
+        this.shadowsEnabled = createOption(boolean.class, "shadowsEnabled")
+                .binding(defaults.shadowsEnabled, () -> config.shadowsEnabled, val -> config.shadowsEnabled = val)
+                .customController(opt -> new BooleanController(opt, val -> Component.translatable(LANG_KEY_PREFIX + ".entry.enabled." + val), false))
+                .build();
+        this.shadowUpdateRate = createOption(Integer.class, "shadowUpdateRate")
+                .binding(defaults.shadowUpdateRate, () -> config.shadowUpdateRate, val -> config.shadowUpdateRate = val)
+                .customController(opt -> new dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController(opt, 10, 1000, 10))
+                .build();
+        this.shadowWorldLoadDelay = createOption(Integer.class, "shadowWorldLoadDelay")
+                .binding(defaults.shadowWorldLoadDelay, () -> config.shadowWorldLoadDelay, val -> config.shadowWorldLoadDelay = val)
+                .customController(opt -> new dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController(opt, 0, 10000, 100))
+                .build();
+        this.shadowMaxTimePerIteration = createOption(Integer.class, "shadowMaxTimePerIteration")
+                .binding(defaults.shadowMaxTimePerIteration, () -> config.shadowMaxTimePerIteration, val -> config.shadowMaxTimePerIteration = val)
+                .customController(opt -> new dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController(opt, 1, 100, 1))
+                .build();
         this.fogRangeFactor = createOption(float.class, "fogRangeFactor")
                 .binding(defaults.fogRangeFactor, () -> config.fogRangeFactor, val -> config.fogRangeFactor = val)
                 .customController(opt -> new FloatSliderController(opt, 0.1f, 8.0f, 0.1f, ConfigGUI::formatAsTimes))
@@ -334,7 +354,7 @@ public class ConfigGUI {
 
         performanceCategory.add(new Tuple<>(OptionGroup.createBuilder()
                 .name(groupLabel("performance.technical")), performanceTechnicalGroup));
-        performanceTechnicalGroup.addAll(List.of(useFrustumCulling, useSamplerCaching));
+        performanceTechnicalGroup.addAll(List.of(useFrustumCulling, useSamplerCaching, shadowsEnabled, shadowUpdateRate, shadowWorldLoadDelay, shadowMaxTimePerIteration));
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
                 .name(categoryLabel("shaders")), shaderPresetGUI.shadersCategory));

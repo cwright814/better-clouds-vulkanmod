@@ -23,7 +23,7 @@ public class ChunkedGenerator implements AutoCloseable {
     private static int cacheHit = 0;
     private static int cacheMiss = 0;
     private final long seed;
-    private Sampler sampler;
+    public Sampler sampler;
     private DummyCache pointCache;
     private double originX, originZ;
     private long lastCloudTicks;
@@ -126,6 +126,11 @@ public class ChunkedGenerator implements AutoCloseable {
     public synchronized Config config() {
         if (swappedTask == null) return null;
         return swappedTask.options;
+    }
+
+    public float currentCloudiness() {
+        if (swappedTask == null) return 0.5f;
+        return swappedTask.cloudiness();
     }
 
     public synchronized boolean generating() {
