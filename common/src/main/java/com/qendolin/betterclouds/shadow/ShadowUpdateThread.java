@@ -63,7 +63,9 @@ public class ShadowUpdateThread extends Thread {
                 int renderDist = client.options.renderDistance().get();
                 int playerChunkX = client.player.getBlockX() >> 4;
                 int playerChunkZ = client.player.getBlockZ() >> 4;
-                int cloudY = (int) com.qendolin.betterclouds.config.ConfigManager.instance().yOffset;
+                float cloudHeightRaw = client.level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.CLOUD_HEIGHT, new net.minecraft.world.phys.Vec3(client.player.getX(), client.player.getY(), client.player.getZ()));
+                int cloudY = (int) cloudHeightRaw;
+                CloudShadowMap.cloudY = cloudY;
                 long startMs = System.currentTimeMillis();
                 int maxTime = com.qendolin.betterclouds.config.ConfigManager.instance().shadowMaxTimePerIteration;
 

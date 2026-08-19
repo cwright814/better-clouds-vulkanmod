@@ -6,6 +6,8 @@ import net.minecraft.util.Mth;
 
 public class CloudShadowMap {
 
+    public static int cloudY = 192;
+
     /**
      * Calculates the cloud opacity (0-15) for a given absolute world coordinate.
      * This mimics the ChunkedGenerator noise sampling to mathematically determine

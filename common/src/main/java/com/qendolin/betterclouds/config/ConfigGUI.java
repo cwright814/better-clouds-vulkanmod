@@ -210,7 +210,7 @@ public class ConfigGUI {
                 .build();
         this.shadowsEnabled = createOption(boolean.class, "shadowsEnabled")
                 .binding(defaults.shadowsEnabled, () -> config.shadowsEnabled, val -> config.shadowsEnabled = val)
-                .customController(opt -> new BooleanController(opt, val -> Component.translatable(LANG_KEY_PREFIX + ".entry.enabled." + val), false))
+                .customController(TickBoxController::new)
                 .build();
         this.shadowUpdateRate = createOption(Integer.class, "shadowUpdateRate")
                 .binding(defaults.shadowUpdateRate, () -> config.shadowUpdateRate, val -> config.shadowUpdateRate = val)
@@ -354,7 +354,15 @@ public class ConfigGUI {
 
         performanceCategory.add(new Tuple<>(OptionGroup.createBuilder()
                 .name(groupLabel("performance.technical")), performanceTechnicalGroup));
-        performanceTechnicalGroup.addAll(List.of(useFrustumCulling, useSamplerCaching, shadowsEnabled, shadowUpdateRate, shadowWorldLoadDelay, shadowMaxTimePerIteration));
+        performanceTechnicalGroup.addAll(List.of(useFrustumCulling, useSamplerCaching));
+
+        ConfigCategory.Builder shadowCategory = ConfigCategory.createBuilder()
+                .name(Component.translatable("betterclouds.config.category.shadows"));
+        List<Option<?>> shadowGroup = new ArrayList<>(List.of(
+                shadowsEnabled, shadowUpdateRate, shadowWorldLoadDelay, shadowMaxTimePerIteration
+        ));
+        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows")).option(shadowsEnabled).option(shadowUpdateRate).option(shadowWorldLoadDelay).option(shadowMaxTimePerIteration).build());
+        categories.add(new Tuple<>(shadowCategory, new ArrayList<>()));
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
                 .name(categoryLabel("shaders")), shaderPresetGUI.shadersCategory));

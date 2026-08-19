@@ -23,7 +23,7 @@ public abstract class LightEngineMixin {
         BlockPos pos = lastPos.get();
         if (pos == null) return;
         
-        int cloudY = (int) com.qendolin.betterclouds.config.ConfigManager.instance().yOffset;
+        int cloudY = CloudShadowMap.cloudY;
         if (pos.getY() == cloudY) {
             int cloudOpacity = CloudShadowMap.getOpacity(pos.getX(), pos.getZ());
             if (cloudOpacity > 0) {
