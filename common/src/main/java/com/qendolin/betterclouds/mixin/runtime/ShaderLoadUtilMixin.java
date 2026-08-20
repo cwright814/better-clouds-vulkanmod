@@ -50,7 +50,20 @@ public class ShaderLoadUtilMixin {
             System.out.println("[BetterClouds Debug] Intercepting BERYL entity.vsh!");
             InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/entity.vsh");
             if (is != null) cir.setReturnValue(is);
+        } else if (path.endsWith("beryl/shaders/translucent/translucent.json")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL translucent.json!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/translucent.json");
+            if (is != null) cir.setReturnValue(is);
+        } else if (path.endsWith("beryl/shaders/translucent/translucent.fsh")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL translucent.fsh!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/translucent.fsh");
+            if (is != null) cir.setReturnValue(is);
+        } else if (path.endsWith("beryl/shaders/translucent/translucent.vsh")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL translucent.vsh!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/translucent.vsh");
+            if (is != null) cir.setReturnValue(is);
         }
+
 
     }
 }
