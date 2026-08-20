@@ -38,6 +38,19 @@ public class ShaderLoadUtilMixin {
             InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/terrain.json");
             if (is != null) cir.setReturnValue(is);
             else System.out.println("[BetterClouds Debug] FAILED to find custom BERYL terrain.json!");
+        } else if (path.endsWith("beryl/shaders/entity/entity.json")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL entity.json!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/entity.json");
+            if (is != null) cir.setReturnValue(is);
+        } else if (path.endsWith("beryl/shaders/entity/entity.fsh")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL entity.fsh!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/entity.fsh");
+            if (is != null) cir.setReturnValue(is);
+        } else if (path.endsWith("beryl/shaders/entity/entity.vsh")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL entity.vsh!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/entity.vsh");
+            if (is != null) cir.setReturnValue(is);
         }
+
     }
 }
