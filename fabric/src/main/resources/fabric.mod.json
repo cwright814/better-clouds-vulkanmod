@@ -54,7 +54,8 @@
     "yet_another_config_lib_v3" : ">=3.9.0"
   },
   "recommends" : {
-    "modmenu" : "*"
+    "modmenu" : "*",
+    "vulkanmod" : "*"
   },
   "breaks" : {
     "iris" : "<1.6.0",

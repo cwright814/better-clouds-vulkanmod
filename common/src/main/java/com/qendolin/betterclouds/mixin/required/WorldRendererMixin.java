@@ -130,6 +130,9 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
 
     @Unique
     private void better_clouds$renderCloudsInternal(FrameGraphBuilder frameGraphBuilder, Vec3 cameraPos, long gameTime, float ticksInput, CallbackInfo ci) {
+        if (gameTime % 100 == 0 && ci.isCancelled()) {
+            BetterCloudsStatic.getLogger().info("WorldRendererMixin: Someone (DH?) cancelled addCloudsPass before Better Clouds!");
+        }
         double camX = cameraPos.x, camY = cameraPos.y, camZ = cameraPos.z;
         float tickDelta = Mth.frac(ticksInput);
         Matrix4f viewMat = RenderHelper.getViewMatrix();
@@ -144,7 +147,12 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
         if (level == null) return;
         if (!ConfigManager.instance().enabledDimensions.contains(level.dimensionTypeRegistration().unwrapKey().orElse(null)))
             return;
-        if (!BetterClouds.isEnabled()) return;
+        if (!BetterClouds.isEnabled()) {
+            if (gameTime % 100 == 0) BetterCloudsStatic.getLogger().info("WorldRendererMixin: BetterClouds is disabled!");
+            return;
+        }
+
+        if (gameTime % 100 == 0) BetterCloudsStatic.getLogger().info("WorldRendererMixin: preparing clouds!");
 
         getProfiler().push(BetterCloudsStatic.MODID);
         glCompat.pushDebugGroupDev("Better Clouds");

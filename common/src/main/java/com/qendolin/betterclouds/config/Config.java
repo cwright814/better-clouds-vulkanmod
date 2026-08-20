@@ -40,12 +40,6 @@ public class Config {
     @SerialEntry
     public boolean shadowsEnabled = true;
     @SerialEntry
-    public int shadowUpdateRate = 100;
-    @SerialEntry
-    public int shadowWorldLoadDelay = 2000;
-    @SerialEntry
-    public int shadowMaxTimePerIteration = 15;
-    @SerialEntry
     public float randomPlacement = 1.0f;
     @SerialEntry
     public float fuzziness = 0.86f;

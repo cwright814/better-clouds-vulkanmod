@@ -78,12 +78,7 @@ vec4 bilinearTexture(sampler2D tex, vec2 uv) {
 
 void main() {
     #if DISTANT_HORIZONS
-    if (pass_dh_depth != -1.0) {
-        float dh_depth = texelFetch(u_dh_depth_texture, ivec2(gl_FragCoord.xy), 0).r;
-        if (pass_dh_depth < dh_depth) {
-            discard;
-        }
-    }
+    // DH depth testing removed because the texture is not bound correctly and reads garbage
     #endif
 
     int x = int(gl_FragCoord.x) % 4;

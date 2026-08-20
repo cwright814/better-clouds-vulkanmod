@@ -23,6 +23,15 @@ public class RuntimeMixinPlugin extends MixinPlugin {
         if (BetterCloudsStatic.IS_DEV) {
             classes.add("GlDebugMixin");
         }
+        
+        if (ModLoader.isModLoaded("vulkanmod")) {
+            classes.add("ShaderLoadUtilMixin");
+            classes.add("VulkanRenderContextMixin");
+        }
+        
+        if (ModLoader.isModLoaded("beryl")) {
+            classes.add("BerylPipelineConfigsMixin");
+        }
 
         //noinspection ConstantValue
         if (classes.isEmpty())

@@ -55,8 +55,9 @@ public class BetterClouds extends BetterCloudsStatic {
         SereneSeasonsCompat.initialize();
         FabricSeasonsCompat.initialize();
         EnhancedCelestialsCompat.initialize();
-        
-        new com.qendolin.betterclouds.shadow.ShadowUpdateThread().start();
+        if (com.qendolin.betterclouds.compat.ModLoaded.VULKANMOD) {
+            com.qendolin.betterclouds.shadow.VulkanShadows.registerUniforms();
+        }
 
         RandomPath.initialize();
 
