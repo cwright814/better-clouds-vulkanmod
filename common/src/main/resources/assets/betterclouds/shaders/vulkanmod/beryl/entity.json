@@ -39,6 +39,8 @@
             { "name": "ShadowBias", "type": "float", "count": 1, "values": [ 1.0 ] },
             { "name": "ShadowDistortion", "type": "float", "count": 1, "values": [ 1.0 ] }
         ] },
+        { "type": "all", "binding": 6, "fields": [ { "name": "Dummy6", "type": "float", "count": 1, "values": [0.0] } ] },
+        { "type": "all", "binding": 7, "fields": [ { "name": "Dummy7", "type": "float", "count": 1, "values": [0.0] } ] },
         { "type": "all", "binding": 8, "fields": [
             { "name": "WindDriftX", "type": "float", "count": 1, "values": [ 0.0 ] },
             { "name": "WindDriftZ", "type": "float", "count": 1, "values": [ 0.0 ] },
