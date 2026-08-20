@@ -40,8 +40,21 @@ public class Config {
     @SerialEntry
     public boolean shadowsEnabled = true;
     @SerialEntry
-    public float shadowIntensity = 0.5f;
+    public boolean syncedShadows = true;
     @SerialEntry
+    public float shadowIntensity = 0.65f;
+    @SerialEntry
+    public float shadowOffsetX = 0.0f;
+    @SerialEntry
+    public float shadowOffsetZ = 0.0f;
+    @SerialEntry
+    public float shadowRotation = 0.0f;
+    @SerialEntry
+    public boolean shadowFlipX = false;
+    @SerialEntry
+    public boolean shadowFlipZ = false;
+    @SerialEntry
+    public float shadowScale = 1.0f;
     public float randomPlacement = 1.0f;
     @SerialEntry
     public float fuzziness = 0.86f;

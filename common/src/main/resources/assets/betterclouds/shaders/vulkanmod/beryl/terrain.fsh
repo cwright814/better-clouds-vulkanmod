@@ -51,6 +51,14 @@ layout(binding = 8) uniform CloudUBO {
     float CameraX;
     float CameraZ;
     float CloudShadowIntensity;
+    float NoiseOffsetX;
+    float NoiseOffsetZ;
+    float ShadowOffsetX;
+    float ShadowOffsetZ;
+    float ShadowRotation;
+    float ShadowFlipX;
+    float ShadowFlipZ;
+    float ShadowScale;
 };
 
 layout(location = 0) in float vertexDistance;
@@ -101,6 +109,9 @@ float snoise_c(vec2 v) {
   g.yz = a0.yz * x12.xz + h.yz * x12.yw;
   return 130.0 * dot(m, g);
 }
+float snoise_offset(vec2 v) {
+  return snoise_c(v + vec2(NoiseOffsetX, NoiseOffsetZ));
+}
 float computeCloudShadow(vec2 wpos) {
     if (CloudShadowsEnabled <= 0.0 || CloudScale <= 0.0 || Cloudiness <= 0.0) return 0.0;
     
@@ -112,18 +123,33 @@ float computeCloudShadow(vec2 wpos) {
     // Offset by wind drift so shadows track cloud movement
     vec2 samplePos = absWpos - vec2(WindDriftX, WindDriftZ);
     
-    // Better Clouds uses PerlinSimplexNoise with octaves [-1, 0, 1, 2] sampled at
-    // x/scale/128. With scale=2, the base noise coord is x/256, giving ~256-block features.
-    // That's too large to see within render distance. We approximate the multi-octave
-    // character by using a higher base frequency and 4 octaves of our simplex noise.
-    // Base frequency: one noise cell ≈ 64 blocks (visible cloud-shadow scale)
-    vec2 nBase = samplePos / 64.0;
+    // Apply user manual offsets
+    samplePos -= vec2(ShadowOffsetX, ShadowOffsetZ);
     
-    // 4 octaves: large shapes + medium detail + small detail + fine detail
-    float value = snoise_c(nBase * 0.25) * 0.4   // ~256 block features (cloud mass shapes)
-                + snoise_c(nBase * 0.5)  * 0.3   // ~128 block features (individual clouds)
-                + snoise_c(nBase)        * 0.2   // ~64 block features (cloud edges)
-                + snoise_c(nBase * 2.0)  * 0.1;  // ~32 block features (fine detail)
+    // Apply user manual flips
+    if (ShadowFlipX > 0.5) samplePos.x = -samplePos.x;
+    if (ShadowFlipZ > 0.5) samplePos.y = -samplePos.y;
+    
+    // Apply user manual rotation
+    if (ShadowRotation != 0.0) {
+        float r = ShadowRotation * 3.14159265359 / 180.0;
+        float c = cos(r);
+        float s = sin(r);
+        samplePos = vec2(
+            samplePos.x * c - samplePos.y * s,
+            samplePos.x * s + samplePos.y * c
+        );
+    }
+    
+    // Match the exact scale of Sampler.java!
+    float fScale = CloudScale * 128.0;
+    vec2 nx = samplePos / (fScale * ShadowScale) + vec2(0.5);
+    
+    // 4 octaves to match the CPU shader exactly!
+    float value = snoise_offset(nx * 0.25) * 0.4
+                + snoise_offset(nx * 0.5)  * 0.3
+                + snoise_offset(nx)        * 0.2
+                + snoise_offset(nx * 2.0)  * 0.1;
     
     // Normalize from [-1,1] to [0,1]
     value = value * 0.5 + 0.5;
@@ -135,7 +161,7 @@ float computeCloudShadow(vec2 wpos) {
     
     // Coverage mask: use low-frequency noise to create regional variation
     // (some areas cloudy, some clear) like the original Sampler does
-    float coverage = snoise_c(samplePos / 1024.0 + vec2(0.5));
+    float coverage = snoise_offset(samplePos / 1024.0 + vec2(0.5));
     float covThresh = -0.6 * Cloudiness;
     float covMask = smoothstep(covThresh - 0.3, covThresh, coverage);
     value *= covMask;

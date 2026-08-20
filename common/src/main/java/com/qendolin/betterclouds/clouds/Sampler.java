@@ -37,10 +37,15 @@ public class Sampler {
     private final SimplexNoise coverageNoise;
     private final List<PerlinSimplexNoise> detailNoises;
 
+    public final float noiseOffsetX;
+    public final float noiseOffsetZ;
+
     public Sampler(long seed) {
         WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(seed));
         WorldgenRandom regionRandom = new WorldgenRandom(new LegacyRandomSource(random.nextInt()));
         this.seed = seed;
+        this.noiseOffsetX = hashToFloat(seed, 'O', 'X') * 10000.0f;
+        this.noiseOffsetZ = hashToFloat(seed, 'O', 'Z') * 10000.0f;
 
         Config options = ConfigManager.instance();
 
@@ -57,6 +62,8 @@ public class Sampler {
         this.seed = 1337;
         WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(seed));
         WorldgenRandom regionRandom = new WorldgenRandom(new LegacyRandomSource(random.nextInt()));
+        this.noiseOffsetX = hashToFloat(seed, 'O', 'X') * 10000.0f;
+        this.noiseOffsetZ = hashToFloat(seed, 'O', 'Z') * 10000.0f;
 
         Config options = new Config();
         options.noisePreset().octaves = Arrays.asList(
@@ -113,33 +120,49 @@ public class Sampler {
     }
 
     public float sample(int x, int z, float cloudiness, float fuzziness, float scale) {
-        double value;
-
-        // Shift coordinates slightly to avoid artifacts at the exact noise origin (0,0)
-        double nx = (double) x / scale / 128.0 + 0.5;
-        double nz = (double) z / scale / 128.0 + 0.5;
-
-        // TODO: A vanilla like cloud distribution is not possible with this function
-        if (detailNoises.size() > 1) {
-            double regionNoiseValue = (regionNoise.getValue((double) x / REGION_SIZE + 0.5, (double) z / REGION_SIZE + 0.5) * 0.5 + 0.5) * detailNoises.size();
-            int noiseInd = (int) regionNoiseValue;
-            // Prevent OutOfBounds just in case regionNoiseValue hits exactly 1.0
-            if (noiseInd >= detailNoises.size()) noiseInd = detailNoises.size() - 1;
-            if (noiseInd < 0) noiseInd = 0;
-            PerlinSimplexNoise noise1 = detailNoises.get(noiseInd), noise2 = detailNoises.get((noiseInd + 1) % detailNoises.size());
-
-            value = Mth.lerp(
-                    Math.pow(Mth.clamp(regionNoiseValue - noiseInd, 0, 1), 5),
-                    noise1.getValue(nx, nz, false),
-                    noise2.getValue(nx, nz, false)
-            );
+        float value;
+        if (ConfigManager.instance().syncedShadows) {
+            // Base noise coordinate
+            float fScale = scale * 128.0f;
+            float nx = (float) x / fScale + 0.5f;
+            float nz = (float) z / fScale + 0.5f;
+            
+            // 4 octaves to match the GPU shader exactly!
+            value = SNoise.snoise(nx * 0.25f, nz * 0.25f, noiseOffsetX, noiseOffsetZ) * 0.4f
+                  + SNoise.snoise(nx * 0.5f,  nz * 0.5f,  noiseOffsetX, noiseOffsetZ) * 0.3f
+                  + SNoise.snoise(nx,         nz,         noiseOffsetX, noiseOffsetZ) * 0.2f
+                  + SNoise.snoise(nx * 2.0f,  nz * 2.0f,  noiseOffsetX, noiseOffsetZ) * 0.1f;
         } else {
-            value = detailNoises.getFirst().getValue(nx, nz, false);
+            // Shift coordinates slightly to avoid artifacts at the exact noise origin (0,0)
+            double nx = (double) x / scale / 128.0 + 0.5;
+            double nz = (double) z / scale / 128.0 + 0.5;
+
+            // TODO: A vanilla like cloud distribution is not possible with this function
+            if (detailNoises.size() > 1) {
+                double regionNoiseValue = (regionNoise.getValue((double) x / REGION_SIZE + 0.5, (double) z / REGION_SIZE + 0.5) * 0.5 + 0.5) * detailNoises.size();
+                int noiseInd = (int) regionNoiseValue;
+                // Prevent OutOfBounds just in case regionNoiseValue hits exactly 1.0
+                if (noiseInd >= detailNoises.size()) noiseInd = detailNoises.size() - 1;
+                if (noiseInd < 0) noiseInd = 0;
+                PerlinSimplexNoise noise1 = detailNoises.get(noiseInd), noise2 = detailNoises.get((noiseInd + 1) % detailNoises.size());
+
+                value = (float) Mth.lerp(
+                        Math.pow(Mth.clamp(regionNoiseValue - noiseInd, 0, 1), 5),
+                        noise1.getValue(nx, nz, false),
+                        noise2.getValue(nx, nz, false)
+                );
+            } else {
+                value = (float) detailNoises.getFirst().getValue(nx, nz, false);
+            }
         }
 
-        value = value / 2 + 0.5;
-        value = (value - (1 - cloudiness)) / cloudiness;
-        value *= smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, coverageNoise.getValue((double) x / 1024.0 + 0.5, (double) z / 1024.0 + 0.5));
+        value = value / 2.0f + 0.5f;
+        value = (value - (1.0f - cloudiness)) / cloudiness;
+        if (ConfigManager.instance().syncedShadows) {
+            value *= (float)smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, SNoise.snoise((float)(x / 1024.0 + 0.5), (float)(z / 1024.0 + 0.5), noiseOffsetX, noiseOffsetZ));
+        } else {
+            value *= (float)smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, coverageNoise.getValue((double) x / 1024.0 + 0.5, (double) z / 1024.0 + 0.5));
+        }
 
         float random = hashToFloat(seed, 'B', x, z);
         if (random > value + (BASE_FUZZINESS - fuzziness)) value = 0;

@@ -38,6 +38,38 @@ public class VulkanShadows {
                 ChunkedGenerator gen = getGenerator();
                 return gen != null ? (float) (gen.sampler.getSeed() % 1000000000) : 0.0f;
             });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("NoiseOffsetX", () -> {
+                ChunkedGenerator gen = getGenerator();
+                return gen != null ? gen.sampler.noiseOffsetX : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("NoiseOffsetZ", () -> {
+                ChunkedGenerator gen = getGenerator();
+                return gen != null ? gen.sampler.noiseOffsetZ : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowOffsetX", () -> {
+                var config = ConfigManager.instance();
+                return config != null ? config.shadowOffsetX : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowOffsetZ", () -> {
+                var config = ConfigManager.instance();
+                return config != null ? config.shadowOffsetZ : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowRotation", () -> {
+                var config = ConfigManager.instance();
+                return config != null ? config.shadowRotation : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowFlipX", () -> {
+                var config = ConfigManager.instance();
+                return (config != null && config.shadowFlipX) ? 1.0f : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowScale", () -> {
+                var config = ConfigManager.instance();
+                return config != null ? config.shadowScale : 1.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("ShadowFlipZ", () -> {
+                var config = ConfigManager.instance();
+                return (config != null && config.shadowFlipZ) ? 1.0f : 0.0f;
+            });
             net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("CameraX", () -> {
                 return getCameraPos(true);
             });

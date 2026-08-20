@@ -46,6 +46,14 @@ public class BerylPipelineConfigsMixin {
                 .addUniform("float", "CameraX")
                 .addUniform("float", "CameraZ")
                 .addUniform("float", "CloudShadowIntensity")
+                .addUniform("float", "NoiseOffsetX")
+                .addUniform("float", "NoiseOffsetZ")
+                .addUniform("float", "ShadowOffsetX")
+                .addUniform("float", "ShadowOffsetZ")
+                .addUniform("float", "ShadowRotation")
+                .addUniform("float", "ShadowFlipX")
+                .addUniform("float", "ShadowFlipZ")
+                .addUniform("float", "ShadowScale")
                 .build();
         
         builder.addUB(cloudUbo);

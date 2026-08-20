@@ -9,8 +9,7 @@
   ],
   "client" : [
     "ShaderLoadUtilMixin",
-    "BerylPipelineConfigsMixin",
-    "VulkanRenderContextMixin"
+    "BerylPipelineConfigsMixin"
   ],
   "injectors" : {
     "defaultRequire" : 1

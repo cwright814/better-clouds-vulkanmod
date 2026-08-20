@@ -26,7 +26,6 @@ public class RuntimeMixinPlugin extends MixinPlugin {
         
         if (ModLoader.isModLoaded("vulkanmod")) {
             classes.add("ShaderLoadUtilMixin");
-            classes.add("VulkanRenderContextMixin");
         }
         
         if (ModLoader.isModLoaded("beryl")) {

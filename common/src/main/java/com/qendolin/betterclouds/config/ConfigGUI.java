@@ -60,7 +60,14 @@ public class ConfigGUI {
 
     public final Option<Boolean> enabled;
     public final Option<Boolean> shadowsEnabled;
+    public final Option<Boolean> syncedShadows;
     public final Option<Float> shadowIntensity;
+    public final Option<Float> shadowOffsetX;
+    public final Option<Float> shadowOffsetZ;
+    public final Option<Float> shadowRotation;
+    public final Option<Boolean> shadowFlipX;
+    public final Option<Boolean> shadowFlipZ;
+    public final Option<Float> shadowScale;
     public final Option<Float> fogRangeFactor;
     public final Option<Float> fogEndFactor;
 
@@ -210,9 +217,37 @@ public class ConfigGUI {
                 .binding(defaults.shadowsEnabled, () -> config.shadowsEnabled, val -> config.shadowsEnabled = val)
                 .customController(TickBoxController::new)
                 .build();
+        this.syncedShadows = createOption(boolean.class, "syncedShadows")
+                .binding(defaults.syncedShadows, () -> config.syncedShadows, val -> config.syncedShadows = val)
+                .customController(TickBoxController::new)
+                .build();
         this.shadowIntensity = createOption(float.class, "shadowIntensity")
                 .binding(defaults.shadowIntensity, () -> config.shadowIntensity, val -> config.shadowIntensity = val)
                 .customController(opt -> new FloatSliderController(opt, 0.0f, 1.0f, 0.05f, val -> Component.literal(Math.round(val * 100) + "%")))
+                .build();
+        this.shadowOffsetX = createOption(float.class, "shadowOffsetX")
+                .binding(defaults.shadowOffsetX, () -> config.shadowOffsetX, val -> config.shadowOffsetX = val)
+                .customController(opt -> new FloatSliderController(opt, -2000.0f, 2000.0f, 10.0f))
+                .build();
+        this.shadowOffsetZ = createOption(float.class, "shadowOffsetZ")
+                .binding(defaults.shadowOffsetZ, () -> config.shadowOffsetZ, val -> config.shadowOffsetZ = val)
+                .customController(opt -> new FloatSliderController(opt, -2000.0f, 2000.0f, 10.0f))
+                .build();
+        this.shadowRotation = createOption(float.class, "shadowRotation")
+                .binding(defaults.shadowRotation, () -> config.shadowRotation, val -> config.shadowRotation = val)
+                .customController(opt -> new FloatSliderController(opt, -180.0f, 180.0f, 1.0f))
+                .build();
+        this.shadowFlipX = createOption(boolean.class, "shadowFlipX")
+                .binding(defaults.shadowFlipX, () -> config.shadowFlipX, val -> config.shadowFlipX = val)
+                .customController(TickBoxController::new)
+                .build();
+        this.shadowFlipZ = createOption(boolean.class, "shadowFlipZ")
+                .binding(defaults.shadowFlipZ, () -> config.shadowFlipZ, val -> config.shadowFlipZ = val)
+                .customController(TickBoxController::new)
+                .build();
+        this.shadowScale = createOption(float.class, "shadowScale")
+                .binding(defaults.shadowScale, () -> config.shadowScale, val -> config.shadowScale = val)
+                .customController(opt -> new FloatSliderController(opt, 0.1f, 5.0f, 0.1f, ConfigGUI::formatAsTimes))
                 .build();
         this.fogRangeFactor = createOption(float.class, "fogRangeFactor")
                 .binding(defaults.fogRangeFactor, () -> config.fogRangeFactor, val -> config.fogRangeFactor = val)
@@ -350,9 +385,18 @@ public class ConfigGUI {
                 .name(Component.translatable("betterclouds.config.category.shadows"));
         List<Option<?>> shadowGroup = new ArrayList<>(List.of(
                 shadowsEnabled,
-                shadowIntensity
+                syncedShadows,
+                shadowIntensity,
+                shadowOffsetX,
+                shadowOffsetZ,
+                shadowRotation,
+                shadowFlipX,
+                shadowFlipZ
         ));
-        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows")).option(shadowsEnabled).option(shadowIntensity).build());
+        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows"))
+                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity)
+                .option(shadowOffsetX).option(shadowOffsetZ).option(shadowRotation)
+                .option(shadowFlipX).option(shadowFlipZ).option(shadowScale).build());
         categories.add(new Tuple<>(shadowCategory, new ArrayList<>()));
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
