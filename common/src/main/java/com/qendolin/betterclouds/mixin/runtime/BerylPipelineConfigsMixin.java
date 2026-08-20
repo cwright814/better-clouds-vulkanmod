@@ -45,6 +45,7 @@ public class BerylPipelineConfigsMixin {
                 .addUniform("float", "CloudTime")
                 .addUniform("float", "CameraX")
                 .addUniform("float", "CameraZ")
+                .addUniform("float", "CloudShadowIntensity")
                 .build();
         
         builder.addUB(cloudUbo);

@@ -60,6 +60,7 @@ public class ConfigGUI {
 
     public final Option<Boolean> enabled;
     public final Option<Boolean> shadowsEnabled;
+    public final Option<Float> shadowIntensity;
     public final Option<Float> fogRangeFactor;
     public final Option<Float> fogEndFactor;
 
@@ -209,6 +210,10 @@ public class ConfigGUI {
                 .binding(defaults.shadowsEnabled, () -> config.shadowsEnabled, val -> config.shadowsEnabled = val)
                 .customController(TickBoxController::new)
                 .build();
+        this.shadowIntensity = createOption(float.class, "shadowIntensity")
+                .binding(defaults.shadowIntensity, () -> config.shadowIntensity, val -> config.shadowIntensity = val)
+                .customController(opt -> new FloatSliderController(opt, 0.0f, 1.0f, 0.05f, val -> Component.literal(Math.round(val * 100) + "%")))
+                .build();
         this.fogRangeFactor = createOption(float.class, "fogRangeFactor")
                 .binding(defaults.fogRangeFactor, () -> config.fogRangeFactor, val -> config.fogRangeFactor = val)
                 .customController(opt -> new FloatSliderController(opt, 0.1f, 8.0f, 0.1f, ConfigGUI::formatAsTimes))
@@ -344,9 +349,10 @@ public class ConfigGUI {
         ConfigCategory.Builder shadowCategory = ConfigCategory.createBuilder()
                 .name(Component.translatable("betterclouds.config.category.shadows"));
         List<Option<?>> shadowGroup = new ArrayList<>(List.of(
-                shadowsEnabled
+                shadowsEnabled,
+                shadowIntensity
         ));
-        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows")).option(shadowsEnabled).build());
+        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows")).option(shadowsEnabled).option(shadowIntensity).build());
         categories.add(new Tuple<>(shadowCategory, new ArrayList<>()));
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()

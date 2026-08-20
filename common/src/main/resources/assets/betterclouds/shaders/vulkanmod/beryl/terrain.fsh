@@ -50,6 +50,7 @@ layout(binding = 8) uniform CloudUBO {
     float CloudTime;
     float CameraX;
     float CameraZ;
+    float CloudShadowIntensity;
 };
 
 layout(location = 0) in float vertexDistance;
@@ -176,7 +177,7 @@ void main() {
     // Cloud Shadow Application - apply cloud shadow to ambient and diffuse radiance
     float cShadow = computeCloudShadow(worldPos.xz);
     if (cShadow > 0.0) {
-        float factor = mix(1.0, 0.5, cShadow);
+        float factor = mix(1.0, 1.0 - CloudShadowIntensity, cShadow);
         albedo *= factor;
     }
 

@@ -40,6 +40,8 @@ public class Config {
     @SerialEntry
     public boolean shadowsEnabled = true;
     @SerialEntry
+    public float shadowIntensity = 0.5f;
+    @SerialEntry
     public float randomPlacement = 1.0f;
     @SerialEntry
     public float fuzziness = 0.86f;
