@@ -42,7 +42,7 @@ public class Config {
     @SerialEntry
     public boolean syncedShadows = true;
     @SerialEntry
-    public float shadowIntensity = 0.65f;
+    public float shadowIntensity = 0.85f;
     @SerialEntry
     public float shadowOffsetX = 0.0f;
     @SerialEntry

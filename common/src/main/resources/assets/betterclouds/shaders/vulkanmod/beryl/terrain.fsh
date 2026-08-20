@@ -203,7 +203,8 @@ void main() {
     // Cloud Shadow Application - apply cloud shadow to ambient and diffuse radiance
     float cShadow = computeCloudShadow(worldPos.xz);
     if (cShadow > 0.0) {
-        float factor = mix(1.0, 1.0 - CloudShadowIntensity, cShadow);
+        // Fade out cloud shadows when underground/indoors using sky light access (light.z)
+        float factor = mix(1.0, 1.0 - (CloudShadowIntensity * light.z), cShadow);
         albedo *= factor;
     }
 
