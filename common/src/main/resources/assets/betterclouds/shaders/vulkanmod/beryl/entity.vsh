@@ -60,7 +60,6 @@ const float LIGHT_CONV = 1.0 / 256.0;
 void main() {
     const vec4 position = vec4(Position, 1.0);
     gl_Position = MVP * vec4(Position, 1.0);
-    
     worldPos = Position;
 
     posLightSpace = LightSpaceMat * position;
@@ -70,7 +69,7 @@ void main() {
 
     vertexDistance = fog_distance(Position.xyz, 0);
 
-//    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+    //    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
     vertexColor.rgb = pow(Color.rgb, vec3(2.2));
     vertexColor.a = Color.a;
 
