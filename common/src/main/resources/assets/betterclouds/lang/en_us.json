@@ -42,7 +42,7 @@
   "betterclouds.config.entry.shadowFlipZ" : "Shadow Flip Z",
   "betterclouds.config.entry.shadowScale" : "Shadow Scale",
   "betterclouds.config.entry.shadowsEnabled.description" : "Enables landscape shadows cast by the clouds.",
-  "betterclouds.config.entry.syncedShadows.description" : "Synchronizes the shape of the shadows to perfectly match the sky clouds.\n\n\u00A7nUn-synced\u00A7r (Perlin noise) produces more visually diverse and complex cloud shapes.\n\n\u00A7nSynced\u00A7r (Simplex noise) forces the clouds to use an alternate generation method that allows the GPU shadows to perfectly match their shape.",
+  "betterclouds.config.entry.syncedShadows.description" : "Synchronizes the shape of the shadows to perfectly match the sky clouds.\n\n\u00A7nUn-synced\u00A7r (Perlin noise) produces more visually diverse and complex cloud shapes.\n\n\u00A7nSynced\u00A7r (Simplex noise) forces the clouds to use an alternate generation method that allows the landscape shadows to perfectly match their shape.",
   "betterclouds.config.entry.shadowIntensity.description" : "How dark the shadows appear on the landscape.",
   "betterclouds.config.entry.shadowOffsetX.description" : "Manual X offset for the shadows.",
   "betterclouds.config.entry.shadowOffsetZ.description" : "Manual Z offset for the shadows.",
