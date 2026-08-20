@@ -394,7 +394,8 @@ public class ConfigGUI {
                 shadowFlipZ
         ));
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows"))
-                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity)
+                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity).build());
+        shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.group.shadows.debug"))
                 .option(shadowOffsetX).option(shadowOffsetZ).option(shadowRotation)
                 .option(shadowFlipX).option(shadowFlipZ).option(shadowScale).build());
         categories.add(new Tuple<>(shadowCategory, new ArrayList<>()));

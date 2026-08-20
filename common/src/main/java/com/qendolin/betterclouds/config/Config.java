@@ -57,7 +57,7 @@ public class Config {
     public float shadowScale = 1.0f;
     public float randomPlacement = 1.0f;
     @SerialEntry
-    public float fuzziness = 0.86f;
+    public float fuzziness = 1.0f;
     @SerialEntry
     public float yRange = 128f;
     @SerialEntry
@@ -75,11 +75,11 @@ public class Config {
     @SerialEntry
     public float sizeY = 12f;
     @SerialEntry
-    public float travelSpeed = 0.1f;
+    public float travelSpeed = 3.0f;
     @SerialEntry
     public float windEffectFactor = 1.0f;
     @SerialEntry
-    public float windSpeedFactor = 0.8f;
+    public float windSpeedFactor = 0.4f;
     @SerialEntry
     public float colorVariationFactor = 0.8f;
     @SerialEntry
@@ -87,7 +87,7 @@ public class Config {
     @SerialEntry
     public int chunkSize = 32;
     @SerialEntry
-    public float samplingScale = 2.0f;
+    public float samplingScale = 1.0f;
     @SerialEntry
     public float scaleFalloffMin = 0.25f;
     @SerialEntry
