@@ -280,16 +280,7 @@ void main() {
         float metallic = material.metallic;
 
         vec3 albedo = texColor.rgb;
-
-        
-    // Cloud Shadow Application
-    float cShadow = computeCloudShadow(worldPos.xz);
-    if (cShadow > 0.0) {
-        float factor = mix(1.0, 1.0 - (CloudShadowIntensity * light.z), cShadow);
-        albedo *= factor;
-    }
-
-    vec3 radiance = LightColor * 0.6;
+vec3 radiance = LightColor * 0.6;
 
         // Gradually reduce lighting when its low on the horizon
         radiance *= saturate((dot(UpVector, LightDir) - 0.04) * 50); // 1 / 0.02
@@ -308,7 +299,16 @@ void main() {
         color.a = texColor.a;
     }
 
+
+    // Global Cloud Shadow Application
+    float cShadow = computeCloudShadow(worldPos.xz);
+    if (cShadow > 0.0) {
+        float factor = mix(1.0, 1.0 - (CloudShadowIntensity * light.z), cShadow);
+        color.rgb *= factor;
+    }
+
     vec3 fragDir = normalize(fragPos);
+
     float RoUp = dot(fragDir, UpVector);
     RoUp = max(RoUp, 0.0);
 
