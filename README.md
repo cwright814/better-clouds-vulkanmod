@@ -13,6 +13,7 @@ This fork of Better Clouds introduces an edge softness vertex shader which produ
 
 - **VulkanMod Native:** Fully re-engineered shader pipeline built specifically for VulkanMod, utilizing optimized uniform buffers (`std140` UBOs) for massive performance gains over vanilla rendering.
 - **Dynamic Density Opacity:** Custom GPU-side shader math smoothly blends the transparency of wispy cloud edges while keeping dense internal clusters prominent and opaque.
+- **Landscape Shadows:** Clouds become even more immersive by casting rolling shadows onto everything below them. A new noise algorithm was implemented to sync the clouds with their shadow counterparts (togglable if you prefer the Perlin clouds). Affects solid and translucent blocks as well as entities, plus it naturally fades away as you explore caves or enter buildings.
 - **Atmospheric Weather States:** Takes full advantage of the new density rendering to make rainy and thundering weather states look visually distinct and impactful at any time of day.
 - **Precision Noise Generation:** Overhauled the underlying noise samplers with double-precision math to eliminate visual artifacts and Moiré ("Farlands") patterns at extreme render distances.
 - **Highly Customizable:** From edge softness and density multipliers to travel speeds and wind effects—practically every visual and performance metric is exposed directly through the Mod Menu.
@@ -30,6 +31,8 @@ To run this specific fork of Better Clouds, you must use the following mod setup
 ## Distant Horizons Compatibility
 
 This mod natively supports rendering underneath Distant Horizons' LODs! To use Distant Horizons alongside VulkanMod and Beryl in Minecraft v26.1.2, make sure to use [our specially patched fork of Distant Horizons](https://github.com/cwright814/distant-horizons-vulkanmod).
+
+> [!NOTE] Landscape shadow integration with Distant Horizons is planned sometime early September 2026.
 
 ## License
 
