@@ -32,7 +32,7 @@ public class VulkanShadows {
             });
             net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("CloudShadowIntensity", () -> {
                 var config = ConfigManager.instance();
-                return config != null ? config.shadowIntensity : 0.5f;
+                return config != null ? config.shadowIntensity : 0.85f;
             });
             net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("CloudTime", () -> {
                 ChunkedGenerator gen = getGenerator();

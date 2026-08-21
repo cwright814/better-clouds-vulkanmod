@@ -39,8 +39,8 @@ layout(binding = 1) uniform UBO {
     float ShadowDistortion;
 };
 
-layout(binding = 2) uniform sampler2D Sampler1;
-layout(binding = 3) uniform sampler2D Sampler2;
+layout(binding = 3) uniform sampler2D Sampler1;
+layout(binding = 4) uniform sampler2D Sampler2;
 
 layout(location = 0) out vec4 vertexColor;
 layout(location = 1) out vec3 normal;

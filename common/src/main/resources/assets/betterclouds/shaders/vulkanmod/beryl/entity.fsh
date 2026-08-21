@@ -3,8 +3,8 @@
 //#include "fog.glsl"
 #include "materials.glsl"
 
-layout(binding = 4) uniform sampler2D Sampler0;
-layout(binding = 5) uniform sampler2DShadow ShadowMap;
+layout(binding = 5) uniform sampler2D Sampler0;
+layout(binding = 6) uniform sampler2DShadow ShadowMap;
 
 layout(binding = 0) uniform UniformBufferObject {
     mat4 MVP;
@@ -34,7 +34,7 @@ layout(binding = 1) uniform UBO {
     float ShadowDistortion;
 };
 
-layout(binding = 8) uniform CloudUBO {
+layout(binding = 2) uniform CloudUBO {
     float WindDriftX;
     float WindDriftZ;
     float Cloudiness;

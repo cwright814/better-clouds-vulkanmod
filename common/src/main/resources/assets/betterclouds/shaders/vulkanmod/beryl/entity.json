@@ -23,176 +23,6 @@
     "UBOs": [
         {
             "type": "all",
-            "binding": 6,
-            "fields": [
-                {
-                    "name": "Dummy6",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "all",
-            "binding": 7,
-            "fields": [
-                {
-                    "name": "Dummy7",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "all",
-            "binding": 8,
-            "fields": [
-                {
-                    "name": "WindDriftX",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "WindDriftZ",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "Cloudiness",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        1.0
-                    ]
-                },
-                {
-                    "name": "CloudScale",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        1.0
-                    ]
-                },
-                {
-                    "name": "CloudShadowsEnabled",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "CloudTime",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "CameraX",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "CameraZ",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "CloudShadowIntensity",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        1.0
-                    ]
-                },
-                {
-                    "name": "NoiseOffsetX",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "NoiseOffsetZ",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowOffsetX",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowOffsetZ",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowRotation",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowFlipX",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowFlipZ",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        0.0
-                    ]
-                },
-                {
-                    "name": "ShadowScale",
-                    "type": "float",
-                    "count": 1,
-                    "values": [
-                        1.0
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "all",
             "binding": 0,
             "fields": [
                 {
@@ -427,6 +257,148 @@
                 },
                 {
                     "name": "ShadowDistortion",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        1.0
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "all",
+            "binding": 2,
+            "fields": [
+                {
+                    "name": "WindDriftX",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "WindDriftZ",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "Cloudiness",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        1.0
+                    ]
+                },
+                {
+                    "name": "CloudScale",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        1.0
+                    ]
+                },
+                {
+                    "name": "CloudShadowsEnabled",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "CloudTime",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "CameraX",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "CameraZ",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "CloudShadowIntensity",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        1.0
+                    ]
+                },
+                {
+                    "name": "NoiseOffsetX",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "NoiseOffsetZ",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowOffsetX",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowOffsetZ",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowRotation",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowFlipX",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowFlipZ",
+                    "type": "float",
+                    "count": 1,
+                    "values": [
+                        0.0
+                    ]
+                },
+                {
+                    "name": "ShadowScale",
                     "type": "float",
                     "count": 1,
                     "values": [
