@@ -181,33 +181,64 @@ float snoise_offset(vec2 v) {
 }
 float computeCloudShadow(vec2 wpos) {
     if (CloudShadowsEnabled <= 0.0 || CloudScale <= 0.0 || Cloudiness <= 0.0) return 0.0;
+    
+    // Safety against NaN flashes during world load
     if (isnan(CameraX) || isnan(CameraZ) || isnan(WindDriftX) || isnan(WindDriftZ)) return 0.0;
     
+    // Absolute world coordinate of the fragment
     vec2 absWpos = wpos + vec2(CameraX, CameraZ);
+    // Offset by wind drift so shadows track cloud movement
     vec2 samplePos = absWpos - vec2(WindDriftX, WindDriftZ);
     
+    // Apply user manual offsets
     samplePos -= vec2(ShadowOffsetX, ShadowOffsetZ);
     
+    // Apply user manual flips
     if (ShadowFlipX > 0.5) samplePos.x = -samplePos.x;
     if (ShadowFlipZ > 0.5) samplePos.y = -samplePos.y;
     
+    // Apply user manual rotation
     if (ShadowRotation != 0.0) {
         float r = ShadowRotation * 3.14159265359 / 180.0;
-        float s = sin(r);
         float c = cos(r);
-        samplePos = vec2(samplePos.x * c - samplePos.y * s, samplePos.x * s + samplePos.y * c);
+        float s = sin(r);
+        samplePos = vec2(
+            samplePos.x * c - samplePos.y * s,
+            samplePos.x * s + samplePos.y * c
+        );
     }
     
-    samplePos /= ShadowScale;
+    // Match the exact scale of Sampler.java!
+    float fScale = CloudScale * 128.0;
+    vec2 nx = samplePos / (fScale * ShadowScale) + vec2(0.5);
     
-    float noiseVal = snoise_offset(samplePos * CloudScale * 1.5) * 0.5 + 0.5;
+    // 4 octaves to match the CPU shader exactly!
+    float value = snoise_offset(nx * 0.25) * 0.4
+                + snoise_offset(nx * 0.5)  * 0.3
+                + snoise_offset(nx)        * 0.2
+                + snoise_offset(nx * 2.0)  * 0.1;
     
-    float lowerBound = max(0.0, 1.0 - Cloudiness - 0.1);
-    float upperBound = min(1.0, 1.0 - Cloudiness + 0.1);
+    // Normalize from [-1,1] to [0,1]
+    value = value * 0.5 + 0.5;
     
-    float shadow = smoothstep(lowerBound, upperBound, noiseVal);
-    return shadow;
+    // Apply cloudiness threshold: higher cloudiness = more shadow coverage
+    // At cloudiness=0.5 (default clear), roughly half the area has shadows
+    value = (value - (1.0 - Cloudiness)) / max(Cloudiness, 0.001);
+    value = clamp(value, 0.0, 1.0);
+    
+    // Coverage mask: use low-frequency noise to create regional variation
+    // (some areas cloudy, some clear) like the original Sampler does
+    float coverage = snoise_offset(samplePos / 1024.0 + vec2(0.5));
+    float covThresh = -0.6 * Cloudiness;
+    float covMask = smoothstep(covThresh - 0.3, covThresh, coverage);
+    value *= covMask;
+    
+    // Gentle contrast enhancement - avoid making it binary
+    value = smoothstep(0.05, 0.6, value);
+    
+    return value;
 }
+
 
 void main() {
     vec4 texColor = texture(Sampler0, texCoord0) * vertexColor;
