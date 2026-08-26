@@ -33,6 +33,10 @@ public class RuntimeMixinPlugin extends MixinPlugin {
         }
 
         //noinspection ConstantValue
+        
+        if (ModLoader.isModLoaded("dh-vulkanmod")) {
+            classes.add("DhVulkanContextMixin");
+        }
         if (classes.isEmpty())
             return null;
 
