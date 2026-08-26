@@ -169,7 +169,10 @@ float computeCloudShadow(vec2 wpos) {
                     // Apply cloud shadow
                     float cShadow = computeCloudShadow(vertexWorldPos.xz);
                     if (cShadow > 0.0) {
-                        float shadowFactor = mix(1.0, 1.0 - DhShadowIntensity, cShadow);
+                        // Fade shadow in the distance to simulate atmospheric scattering
+                        // Starts fading at 50% of DH render distance, completely gone by 90%
+                        float distFade = clamp(1.0 - ((viewDist - (uClipDistance * 0.5)) / (uClipDistance * 0.4)), 0.0, 1.0);
+                        float shadowFactor = mix(1.0, 1.0 - (DhShadowIntensity * distFade), cShadow);
                         fragColor.rgb *= shadowFactor;
                     }
                 }""";
