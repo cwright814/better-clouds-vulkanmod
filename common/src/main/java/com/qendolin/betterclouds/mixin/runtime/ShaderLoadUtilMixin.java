@@ -28,6 +28,16 @@ public class ShaderLoadUtilMixin {
             InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/terrain.fsh");
             if (is != null) cir.setReturnValue(is);
             else System.out.println("[BetterClouds Debug] FAILED to find custom BERYL terrain.fsh!");
+        } else if (path.endsWith("beryl/shaders/sky/sky.fsh")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL sky.fsh!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/sky.fsh");
+            if (is != null) cir.setReturnValue(is);
+            else System.out.println("[BetterClouds Debug] FAILED to find custom BERYL sky.fsh!");
+        } else if (path.endsWith("beryl/shaders/sky/sky.json")) {
+            System.out.println("[BetterClouds Debug] Intercepting BERYL sky.json!");
+            InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/sky.json");
+            if (is != null) cir.setReturnValue(is);
+            else System.out.println("[BetterClouds Debug] FAILED to find custom BERYL sky.json!");
         } else if (path.endsWith("beryl/shaders/terrain/terrain.vsh")) {
             System.out.println("[BetterClouds Debug] Intercepting BERYL terrain.vsh!");
             InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/beryl/terrain.vsh");

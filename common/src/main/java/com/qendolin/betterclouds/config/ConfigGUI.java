@@ -61,6 +61,7 @@ public class ConfigGUI {
     public final Option<Boolean> enabled;
     public final Option<Boolean> shadowsEnabled;
     public final Option<Boolean> syncedShadows;
+    public final Option<Boolean> berylSkyDithering;
     public final Option<Float> shadowIntensity;
     public final Option<Float> dhShadowIntensity;
     public final Option<Float> shadowOffsetX;
@@ -216,6 +217,10 @@ public class ConfigGUI {
                 .build();
         this.shadowsEnabled = createOption(boolean.class, "shadowsEnabled")
                 .binding(defaults.shadowsEnabled, () -> config.shadowsEnabled, val -> config.shadowsEnabled = val)
+                .customController(TickBoxController::new)
+                .build();
+        this.berylSkyDithering = createOption(boolean.class, "berylSkyDithering")
+                .binding(defaults.berylSkyDithering, () -> config.berylSkyDithering, val -> config.berylSkyDithering = val)
                 .customController(TickBoxController::new)
                 .build();
         this.syncedShadows = createOption(boolean.class, "syncedShadows")
@@ -399,7 +404,7 @@ public class ConfigGUI {
                 shadowFlipZ
         ));
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows"))
-                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity).option(dhShadowIntensity).build());
+                .option(shadowsEnabled).option(syncedShadows).option(berylSkyDithering).option(shadowIntensity).option(dhShadowIntensity).build());
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.group.shadows.debug"))
                 .option(shadowOffsetX).option(shadowOffsetZ).option(shadowRotation)
                 .option(shadowFlipX).option(shadowFlipZ).option(shadowScale).build());

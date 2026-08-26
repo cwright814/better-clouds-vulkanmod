@@ -41,6 +41,7 @@ public class Config {
     public boolean shadowsEnabled = true;
     @SerialEntry
     public boolean syncedShadows = true;
+    public boolean berylSkyDithering = true;
     @SerialEntry
     public float shadowIntensity = 0.85f;
     public float dhShadowIntensity = 0.3f;
