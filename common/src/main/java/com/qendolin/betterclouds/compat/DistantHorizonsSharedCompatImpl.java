@@ -91,55 +91,49 @@ public abstract class DistantHorizonsSharedCompatImpl extends DistantHorizonsCom
                 activeIntegrationField = entrypointClass.getDeclaredField("activeIntegration");
                 activeIntegrationField.setAccessible(true);
                 
-                Object activeIntegration = activeIntegrationField.get(null);
-                if (activeIntegration != null) {
-                    getBackendMethod = activeIntegration.getClass().getMethod("getBackend");
-                    Object backend = getBackendMethod.invoke(activeIntegration);
-                    if (backend != null && backend.getClass().getName().equals("com.braffolk.dhvulkan.core.VulkanRenderEngine")) {
-                        getDhFramebufferMethod = backend.getClass().getMethod("getDhFramebuffer");
-                        Object dhFramebuffer = getDhFramebufferMethod.invoke(backend);
-                        if (dhFramebuffer != null) {
-                            getFramebufferMethod = dhFramebuffer.getClass().getMethod("getFramebuffer");
-                            Object framebuffer = getFramebufferMethod.invoke(dhFramebuffer);
-                            if (framebuffer != null) {
-                                getDepthAttachmentMethod = framebuffer.getClass().getMethod("getDepthAttachment");
-                                Object depthAttachment = getDepthAttachmentMethod.invoke(framebuffer);
-                                if (depthAttachment != null) {
-                                    getTextureMethod = depthAttachment.getClass().getMethod("getTexture");
-                                    Object texture = getTextureMethod.invoke(depthAttachment);
-                                    if (texture != null) {
-                                        getIdMethod = texture.getClass().getMethod("getId");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                Class<?> integrationClass = Class.forName("com.braffolk.dhvulkan.bridge.DhIntegration");
+                getBackendMethod = integrationClass.getMethod("getBackend");
+                
+                Class<?> backendClass = Class.forName("com.braffolk.dhvulkan.core.VulkanRenderEngine");
+                getDhFramebufferMethod = backendClass.getMethod("getDhFramebuffer");
+                
+                Class<?> dhFramebufferClass = Class.forName("com.braffolk.dhvulkan.core.DhVulkanFramebuffer");
+                getFramebufferMethod = dhFramebufferClass.getMethod("getFramebuffer");
+                
+                Class<?> framebufferClass = Class.forName("net.vulkanmod.vulkan.framebuffer.Framebuffer");
+                getDepthAttachmentMethod = framebufferClass.getMethod("getDepthAttachment");
+                
+                Class<?> attachmentClass = Class.forName("net.vulkanmod.vulkan.texture.VulkanImage");
+                getTextureMethod = null; // Removed, VulkanImage is already the texture
+                getIdMethod = attachmentClass.getMethod("getId");
             } catch (Exception e) {
-                // Ignore
+                // Keep trying if we haven't successfully loaded classes yet, 
+                // but once we succeed or fail at finding DHV classes, we stop.
+                if (e instanceof ClassNotFoundException || e instanceof NoSuchMethodException) {
+                    reflectionInitialized = true;
+                }
             }
-            reflectionInitialized = true;
+            if (activeIntegrationField != null && getBackendMethod != null) {
+                reflectionInitialized = true;
+            }
         }
 
         try {
             if (activeIntegrationField != null && getBackendMethod != null && getDhFramebufferMethod != null && 
-                getFramebufferMethod != null && getDepthAttachmentMethod != null && getTextureMethod != null && getIdMethod != null) {
+                getFramebufferMethod != null && getDepthAttachmentMethod != null && getIdMethod != null) {
                 
                 Object activeIntegration = activeIntegrationField.get(null);
                 if (activeIntegration != null) {
                     Object backend = getBackendMethod.invoke(activeIntegration);
-                    if (backend != null) {
+                    if (backend != null && backend.getClass().getName().equals("com.braffolk.dhvulkan.core.VulkanRenderEngine")) {
                         Object dhFramebuffer = getDhFramebufferMethod.invoke(backend);
                         if (dhFramebuffer != null) {
                             Object framebuffer = getFramebufferMethod.invoke(dhFramebuffer);
                             if (framebuffer != null) {
                                 Object depthAttachment = getDepthAttachmentMethod.invoke(framebuffer);
                                 if (depthAttachment != null) {
-                                    Object texture = getTextureMethod.invoke(depthAttachment);
-                                    if (texture != null) {
-                                        int id = (Integer) getIdMethod.invoke(texture);
-                                        return Optional.of(id);
-                                    }
+                                    int id = ((Number) getIdMethod.invoke(depthAttachment)).intValue();
+                                    return Optional.of(id);
                                 }
                             }
                         }
@@ -156,7 +150,6 @@ public abstract class DistantHorizonsSharedCompatImpl extends DistantHorizonsCom
         }
         return Optional.empty();
     }
-
     @Override
     public boolean isTextureCreateFlagSet() {
         return textureCreateFlag;

@@ -93,7 +93,7 @@ public class VulkanRenderer implements AutoCloseable {
         
         // Calculate matrices
         float cloudsHeight = client.level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.CLOUD_HEIGHT, new net.minecraft.world.phys.Vec3(cam.x, cam.y, cam.z));
-        if (ticks % 100 == 0) com.qendolin.betterclouds.BetterCloudsStatic.getLogger().info("VulkanRenderer cloudsHeight=" + cloudsHeight);
+
         Matrix4f mvMatrix = new Matrix4f(viewMatrix);
         // BetterClouds fix for translation
         mvMatrix.m30(0); mvMatrix.m31(0); mvMatrix.m32(0); mvMatrix.m33(0);
@@ -182,7 +182,7 @@ public class VulkanRenderer implements AutoCloseable {
         java.nio.FloatBuffer drawBuffer = buffer != null ? buffer.getDrawBuffer() : null;
         if (drawBuffer != null) {
             int numClouds = res.generator.cloudCount();
-            if (ticks % 100 == 0) com.qendolin.betterclouds.BetterCloudsStatic.getLogger().info("VulkanRenderer numClouds=" + numClouds);
+
             if (numClouds > 0) {
                 boolean fancy = client.options.cloudStatus().get() == net.minecraft.client.CloudStatus.FANCY;
                 res.updateExpandedBuffer(drawBuffer, numClouds, fancy);

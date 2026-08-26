@@ -97,8 +97,12 @@ public class VulkanShadows {
 
     private static Object cameraObj = null;
     private static java.lang.reflect.Method getPosMethod = null;
+    private static java.lang.reflect.Method getXMethod = null;
+    private static java.lang.reflect.Method getZMethod = null;
+    private static boolean cameraReflectionFailed = false;
     
     private static float getCameraPos(boolean isX) {
+        if (cameraReflectionFailed) return 0.0f;
         try {
             var gr = Minecraft.getInstance().gameRenderer;
             if (cameraObj == null) {
@@ -116,39 +120,59 @@ public class VulkanShadows {
                         }
                     }
                 }
+                if (cameraObj == null) {
+                    cameraReflectionFailed = true;
+                    return 0.0f;
+                }
             }
-            if (cameraObj != null) {
+            if (getPosMethod == null) {
+                for (var m : cameraObj.getClass().getMethods()) {
+                    if (m.getName().equals("position") || m.getName().equals("getPos")) {
+                        getPosMethod = m;
+                        break;
+                    }
+                }
                 if (getPosMethod == null) {
                     for (var m : cameraObj.getClass().getMethods()) {
-                        if (m.getName().equals("position") || m.getName().equals("getPos")) {
+                        if (m.getReturnType().getName().endsWith("Vec3") || m.getReturnType().getName().endsWith("Vec3d")) {
                             getPosMethod = m;
                             break;
                         }
                     }
-                    if (getPosMethod == null) {
-                        for (var m : cameraObj.getClass().getMethods()) {
-                            if (m.getReturnType().getName().endsWith("Vec3") || m.getReturnType().getName().endsWith("Vec3d")) {
-                                getPosMethod = m;
-                                break;
-                            }
-                        }
-                    }
                 }
-                if (getPosMethod != null) {
-                    var vec3 = getPosMethod.invoke(cameraObj);
-                    if (vec3 != null) {
-                        String targetMethodName = isX ? "x" : "z";
-                        String altMethodName = isX ? "getX" : "getZ";
-                        for (var m : vec3.getClass().getMethods()) {
-                            if (m.getName().equals(targetMethodName) || m.getName().equals(altMethodName)) {
-                                return ((Number) m.invoke(vec3)).floatValue();
-                            }
-                        }
-                    }
+                if (getPosMethod == null) {
+                    cameraReflectionFailed = true;
+                    return 0.0f;
                 }
             }
+            
+            var vec3 = getPosMethod.invoke(cameraObj);
+            if (vec3 != null) {
+                if (isX && getXMethod == null) {
+                    for (var m : vec3.getClass().getMethods()) {
+                        if (m.getName().equals("x") || m.getName().equals("getX")) {
+                            getXMethod = m;
+                            break;
+                        }
+                    }
+                    if (getXMethod == null) cameraReflectionFailed = true;
+                } else if (!isX && getZMethod == null) {
+                    for (var m : vec3.getClass().getMethods()) {
+                        if (m.getName().equals("z") || m.getName().equals("getZ")) {
+                            getZMethod = m;
+                            break;
+                        }
+                    }
+                    if (getZMethod == null) cameraReflectionFailed = true;
+                }
+                
+                if (cameraReflectionFailed) return 0.0f;
+                
+                if (isX) return ((Number) getXMethod.invoke(vec3)).floatValue();
+                else return ((Number) getZMethod.invoke(vec3)).floatValue();
+            }
         } catch (Exception e) {
-            // Silently fall back to 0.0f
+            cameraReflectionFailed = true;
         }
         return 0.0f;
     }

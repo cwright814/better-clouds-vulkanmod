@@ -148,11 +148,11 @@ public abstract class WorldRendererMixin implements WorldRendererDuck {
         if (!ConfigManager.instance().enabledDimensions.contains(level.dimensionTypeRegistration().unwrapKey().orElse(null)))
             return;
         if (!BetterClouds.isEnabled()) {
-            if (gameTime % 100 == 0) BetterCloudsStatic.getLogger().info("WorldRendererMixin: BetterClouds is disabled!");
+
             return;
         }
 
-        if (gameTime % 100 == 0) BetterCloudsStatic.getLogger().info("WorldRendererMixin: preparing clouds!");
+
 
         getProfiler().push(BetterCloudsStatic.MODID);
         glCompat.pushDebugGroupDev("Better Clouds");
