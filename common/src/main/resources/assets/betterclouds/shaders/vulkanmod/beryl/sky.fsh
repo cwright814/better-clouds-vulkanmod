@@ -18,7 +18,7 @@ layout(location = 1) in vec3 fragPos;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 2) uniform sampler2D blueNoise;
+layout(binding = 2) uniform sampler2D Sampler1;
 layout(binding = 3) uniform CloudUBO {
     float BerylSkyDithering;
 };
@@ -69,7 +69,7 @@ void main() {
 
     if (BerylSkyDithering > 0.0) {
         vec2 ditherUV = gl_FragCoord.xy / 256.0;
-        float dither = texture(blueNoise, ditherUV).r;
+        float dither = texture(Sampler1, ditherUV).r;
         // Shift from [0, 1] to [-0.5, 0.5] and scale by 1.0/255.0 to break up 8-bit banding
         fragColor.rgb += (dither - 0.5) / 128.0;
     }

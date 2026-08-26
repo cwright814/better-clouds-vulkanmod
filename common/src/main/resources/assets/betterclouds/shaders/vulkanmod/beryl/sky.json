@@ -2,7 +2,7 @@
   "vertex": "sky",
   "fragment": "sky",
   "samplers": [
-    { "name": "blueNoise", "imageIdx": 1 }
+    { "name": "Sampler1", "imageIdx": 1 }
   ],
   "UBOs": [
     { "type":  "vertex", "binding": 0, "fields": [
