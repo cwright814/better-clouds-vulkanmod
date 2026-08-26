@@ -8,6 +8,7 @@ import net.vulkanmod.vulkan.shader.descriptor.UBO;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.Unique;
 import net.vulkanmod.vulkan.shader.layout.AlignedStruct;
 
 import java.util.List;
@@ -106,6 +107,15 @@ float computeCloudShadow(vec2 wpos) {
 }
 """;
 
+    
+    @Unique
+    private void addCloudUniform(AlignedStruct.Builder struct, String name) {
+        net.vulkanmod.vulkan.shader.layout.Uniform.Info info = 
+            net.vulkanmod.vulkan.shader.layout.Uniform.createUniformInfo("float", name, 1);
+        info.setupSupplier();
+        struct.addUniform(info);
+    }
+    
     @Redirect(
             method = "createTerrainPipeline",
             at = @At(
@@ -122,23 +132,23 @@ float computeCloudShadow(vec2 wpos) {
         List<UBO> ubos = builder.getUBOs();
         
         AlignedStruct.Builder cloudStruct = new AlignedStruct.Builder();
-        cloudStruct.addUniform("float", "WindDriftX", 1);
-        cloudStruct.addUniform("float", "WindDriftZ", 1);
-        cloudStruct.addUniform("float", "Cloudiness", 1);
-        cloudStruct.addUniform("float", "CloudScale", 1);
-        cloudStruct.addUniform("float", "CloudShadowsEnabled", 1);
-        cloudStruct.addUniform("float", "CloudTime", 1);
-        cloudStruct.addUniform("float", "CameraX", 1);
-        cloudStruct.addUniform("float", "CameraZ", 1);
-        cloudStruct.addUniform("float", "CloudShadowIntensity", 1);
-        cloudStruct.addUniform("float", "NoiseOffsetX", 1);
-        cloudStruct.addUniform("float", "NoiseOffsetZ", 1);
-        cloudStruct.addUniform("float", "ShadowOffsetX", 1);
-        cloudStruct.addUniform("float", "ShadowOffsetZ", 1);
-        cloudStruct.addUniform("float", "ShadowRotation", 1);
-        cloudStruct.addUniform("float", "ShadowFlipX", 1);
-        cloudStruct.addUniform("float", "ShadowFlipZ", 1);
-        cloudStruct.addUniform("float", "ShadowScale", 1);
+        addCloudUniform(cloudStruct, "WindDriftX");
+        addCloudUniform(cloudStruct, "WindDriftZ");
+        addCloudUniform(cloudStruct, "Cloudiness");
+        addCloudUniform(cloudStruct, "CloudScale");
+        addCloudUniform(cloudStruct, "CloudShadowsEnabled");
+        addCloudUniform(cloudStruct, "CloudTime");
+        addCloudUniform(cloudStruct, "CameraX");
+        addCloudUniform(cloudStruct, "CameraZ");
+        addCloudUniform(cloudStruct, "CloudShadowIntensity");
+        addCloudUniform(cloudStruct, "NoiseOffsetX");
+        addCloudUniform(cloudStruct, "NoiseOffsetZ");
+        addCloudUniform(cloudStruct, "ShadowOffsetX");
+        addCloudUniform(cloudStruct, "ShadowOffsetZ");
+        addCloudUniform(cloudStruct, "ShadowRotation");
+        addCloudUniform(cloudStruct, "ShadowFlipX");
+        addCloudUniform(cloudStruct, "ShadowFlipZ");
+        addCloudUniform(cloudStruct, "ShadowScale");
         
         ubos.add(cloudStruct.buildUBO("CloudUBO", 2, 16));
 
