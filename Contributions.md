@@ -1,10 +1,21 @@
-## Special Thanks
+## VulkanMod Contributions
+
+- cwright814
+    - Prompting and QA
+- Gemini 3.1 Pro
+    - Lead developer
+- Claude Opus 4.6
+    - Advisor
+
+## Original Contributions
+
+### Special Thanks
 
 - tassimo99
     - Gave me valuable feedback during development
     - Created the cloud light gradient texture
 
-## Code Contributions
+### Code Contributions
 
 - AeiouEnigma
     - Fix `mixins.json` name – [#1](https://github.com/Qendolin/better-clouds/pull/1)
@@ -27,7 +38,7 @@
 
 ... got a PR accepted
 
-## Fixing Issues
+### Fixing Issues
 
 - AeiouEnigma
     - Rendering issue when picking up items – [#4](https://github.com/Qendolin/better-clouds/issues/4)
@@ -39,7 +50,7 @@
 
 ... were especially helpful when troubleshooting errors
 
-## Third Party Licensed Code
+### Third Party Licensed Code
 
 - RenderDoc Api Java Bindings
     - From owo-lib, developed by "glisco"
