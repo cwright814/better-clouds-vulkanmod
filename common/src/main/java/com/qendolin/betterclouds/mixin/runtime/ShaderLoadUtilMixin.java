@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class ShaderLoadUtilMixin {
     @Inject(method = "getInputStream", at = @At("HEAD"), cancellable = true)
     private static void onGetInputStream(String path, CallbackInfoReturnable<InputStream> cir) {
-        System.out.println("[BetterClouds Debug] getInputStream called for: " + path);
+//        System.out.println("[BetterClouds Debug] getInputStream called for: " + path);
         if (path.endsWith("basic/terrain/terrain.fsh")) {
             System.out.println("[BetterClouds Debug] Intercepting terrain.fsh!");
             InputStream is = ShaderLoadUtilMixin.class.getResourceAsStream("/assets/betterclouds/shaders/vulkanmod/terrain.fsh");

@@ -212,7 +212,7 @@ public class ChunkedGenerator implements AutoCloseable {
             boolean bufferCleared = buffer.swapCount() == 0 && queuedTask == null && runningTask == null && (completedTask == null || completedTask == swappedTask);
 
             if (optionsChanged || cloudinessChanged) {
-                BetterCloudsStatic.getLogger().info((optionsChanged ? "Configuration" : "Cloudiness") + " changed, updating geometry");
+//                BetterCloudsStatic.getLogger().info((optionsChanged ? "Configuration" : "Cloudiness") + " changed, updating geometry");
                 queueCacheClear = true;
             }
             updateGeometry = chunkChanged || optionsChanged || cloudinessChanged || bufferCleared;
