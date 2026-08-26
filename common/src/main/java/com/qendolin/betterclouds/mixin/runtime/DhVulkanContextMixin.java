@@ -18,7 +18,7 @@ public class DhVulkanContextMixin {
 
     private static final String CLOUD_SHADOW_CODE = """
 // --- CLOUD SHADOWS NOISE ---
-layout(binding = 3) uniform CloudUBO {
+layout(binding = 2) uniform CloudUBO {
     float WindDriftX;
     float WindDriftZ;
     float Cloudiness;
@@ -140,7 +140,7 @@ float computeCloudShadow(vec2 wpos) {
         cloudStruct.addUniform("float", "ShadowFlipZ", 1);
         cloudStruct.addUniform("float", "ShadowScale", 1);
         
-        ubos.add(cloudStruct.buildUBO("CloudUBO", 3, 16));
+        ubos.add(cloudStruct.buildUBO("CloudUBO", 2, 16));
 
 
         // 2. Modify the fragment shader source
