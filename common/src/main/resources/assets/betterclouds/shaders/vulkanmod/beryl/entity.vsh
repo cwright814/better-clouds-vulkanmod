@@ -45,13 +45,12 @@ layout(binding = 4) uniform sampler2D Sampler2;
 layout(location = 0) out vec4 vertexColor;
 layout(location = 1) out vec3 normal;
 layout(location = 2) out vec4 overlayColor;
-layout(location = 3) out vec2 texCoord0;
+layout(location = 3) out vec4 texCoord0;
 layout(location = 4) out vec4 posLightSpace;
 layout(location = 5) out vec3 fragPos;
 layout(location = 6) out vec3 light;
 layout(location = 7) out float vertexDistance;
 layout(location = 8) out flat Material material;
-layout(location = 14) out vec3 worldPos;
 
 const float LIGHT_CONV = 1.0 / 256.0;
 
@@ -60,8 +59,7 @@ const float LIGHT_CONV = 1.0 / 256.0;
 void main() {
     const vec4 position = vec4(Position, 1.0);
     gl_Position = MVP * vec4(Position, 1.0);
-    worldPos = Position;
-
+    
     posLightSpace = LightSpaceMat * position;
     posLightSpace.xyz = distortShadowClipPos(posLightSpace.xyz);
 
@@ -90,5 +88,5 @@ void main() {
     material = getMaterial(10); // Grass Block
 
     overlayColor = texelFetch(Sampler1, UV1, 0);
-    texCoord0 = UV0;
+    texCoord0 = vec4(UV0, Position.xz);
 }

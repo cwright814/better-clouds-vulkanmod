@@ -85,13 +85,12 @@ vec3 getVertexPosition() {
 layout(location = 0) out float vertexDistance;
 layout(location = 1) out vec4 vertexColor;
 layout(location = 2) out vec3 normal;
-layout(location = 3) out vec2 texCoord0;
+layout(location = 3) out vec4 texCoord0;
 layout(location = 4) out vec4 posLightSpace;
 layout(location = 5) out vec3 fragPos;
 layout(location = 6) out vec3 light;
 layout(location = 7) out flat Material material;
 
-layout(location = 14) out vec3 worldPos;
 
 const float LIGHT_CONV = 1.0 / 256.0;
 
@@ -100,10 +99,10 @@ void main() {
     const vec4 Color = unpackUnorm4x8(PackedColor);
     const uint uv = Position.a;
     const ivec2 UV2 = ivec2(bitfieldExtract(uv, 0, 8), bitfieldExtract(uv, 8, 8));
-    texCoord0 = UV0 * UV_INV;
+    texCoord0.xy = UV0 * UV_INV;
 
     vec4 position = vec4(getVertexPosition(), 1.0);
-    worldPos = position.xyz;
+    texCoord0.zw = position.xz;
 
     float lightY = UV2.y * LIGHT_CONV;
     lightY = lightY * lightY;

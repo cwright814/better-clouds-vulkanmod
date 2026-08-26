@@ -66,12 +66,11 @@ layout(binding = 8) uniform CloudUBO {
 layout(location = 0) in float vertexDistance;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec3 normal;
-layout(location = 3) in vec2 texCoord0;
+layout(location = 3) in vec4 texCoord0;
 layout(location = 4) in vec4 posLightSpace;
 layout(location = 5) in vec3 fragPos;
 layout(location = 6) in vec3 light;
 layout(location = 7) in flat Material material;
-layout(location = 14) in vec3 worldPos;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -241,7 +240,7 @@ float computeCloudShadow(vec2 wpos) {
 
 
 void main() {
-    vec4 texColor = texture(Sampler0, texCoord0) * vertexColor;
+    vec4 texColor = texture(Sampler0, texCoord0.xy) * vertexColor;
 
     if (texColor.a < 0.1) {
         discard;
@@ -301,7 +300,7 @@ vec3 radiance = LightColor * 0.6;
 
 
     // Global Cloud Shadow Application
-    float cShadow = computeCloudShadow(worldPos.xz);
+    float cShadow = computeCloudShadow(texCoord0.zw);
     if (cShadow > 0.0) {
         float factor = mix(1.0, 1.0 - (CloudShadowIntensity * light.z), cShadow);
         color.rgb *= factor;
