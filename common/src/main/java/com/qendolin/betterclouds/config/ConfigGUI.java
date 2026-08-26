@@ -373,6 +373,7 @@ public class ConfigGUI {
         appearanceCategory.add(new Tuple<>(OptionGroup.createBuilder()
                 .name(groupLabel("appearance.sky")), appearanceSkyGroup));
         appearanceSkyGroup.add(celestialBodyHalo);
+        appearanceSkyGroup.add(berylSkyDithering);
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
                 .name(categoryLabel("performance")), performanceCategory));
@@ -404,7 +405,7 @@ public class ConfigGUI {
                 shadowFlipZ
         ));
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows"))
-                .option(shadowsEnabled).option(syncedShadows).option(berylSkyDithering).option(shadowIntensity).option(dhShadowIntensity).build());
+                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity).option(dhShadowIntensity).build());
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.group.shadows.debug"))
                 .option(shadowOffsetX).option(shadowOffsetZ).option(shadowRotation)
                 .option(shadowFlipX).option(shadowFlipZ).option(shadowScale).build());

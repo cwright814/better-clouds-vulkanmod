@@ -29,13 +29,7 @@ public class SkyRendererMixin {
             com.mojang.blaze3d.opengl.GlStateManager._bindTexture(0);
         }
         if (tex != null) {
-            VRenderSystem.setShaderTexture(1, tex.getTextureView());
-        }
-        if (tex != null) {
-            VRenderSystem.setShaderTexture(1, tex.getTextureView());
-        }
-        if (tex != null) {
-            VRenderSystem.setShaderTexture(1, tex.getTextureView());
+            VRenderSystem.setShaderTexture(6, tex.getTextureView());
         }
     }
 }

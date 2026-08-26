@@ -35,6 +35,7 @@
   "betterclouds.config.entry.shadowsEnabled" : "Enable Landscape Shadows",
   "betterclouds.config.entry.syncedShadows" : "Synced Shadows",
   "betterclouds.config.entry.berylSkyDithering" : "Beryl Sky Dithering",
+  "betterclouds.config.entry.berylSkyDithering.tooltip" : "Applies blue noise dithering to the Beryl sky to reduce color banding.",
   "betterclouds.config.entry.shadowIntensity" : "Shadow Intensity",
   "betterclouds.config.entry.dhShadowIntensity" : "DH Shadow Intensity",
   "betterclouds.config.entry.shadowOffsetX" : "Shadow Offset X",
