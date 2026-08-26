@@ -16,6 +16,24 @@ public class SkyRendererMixin {
     @Inject(method = "renderSkyDisc", at = @At("HEAD"))
     private void onRenderSky(float f1, float f2, float f3, CallbackInfo ci) {
         AbstractTexture tex = Minecraft.getInstance().getTextureManager().getTexture(BLUE_NOISE);
+        if (tex == null) {
+            net.minecraft.client.renderer.texture.SimpleTexture stex = new net.minecraft.client.renderer.texture.SimpleTexture(BLUE_NOISE);
+            Minecraft.getInstance().getTextureManager().registerAndLoad(BLUE_NOISE, stex);
+            tex = stex;
+            
+            // Set repeat mode via GL compat
+            int glId = com.qendolin.betterclouds.util.RenderHelper.getTextureId(tex);
+            com.mojang.blaze3d.opengl.GlStateManager._bindTexture(glId);
+            org.lwjgl.opengl.GL32.glTexParameteri(org.lwjgl.opengl.GL32.GL_TEXTURE_2D, org.lwjgl.opengl.GL32.GL_TEXTURE_WRAP_S, org.lwjgl.opengl.GL32.GL_REPEAT);
+            org.lwjgl.opengl.GL32.glTexParameteri(org.lwjgl.opengl.GL32.GL_TEXTURE_2D, org.lwjgl.opengl.GL32.GL_TEXTURE_WRAP_T, org.lwjgl.opengl.GL32.GL_REPEAT);
+            com.mojang.blaze3d.opengl.GlStateManager._bindTexture(0);
+        }
+        if (tex != null) {
+            VRenderSystem.setShaderTexture(1, tex.getTextureView());
+        }
+        if (tex != null) {
+            VRenderSystem.setShaderTexture(1, tex.getTextureView());
+        }
         if (tex != null) {
             VRenderSystem.setShaderTexture(1, tex.getTextureView());
         }
