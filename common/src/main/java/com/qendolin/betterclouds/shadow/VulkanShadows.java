@@ -30,6 +30,10 @@ public class VulkanShadows {
                 var config = ConfigManager.instance();
                 return (config != null && config.shadowsEnabled) ? 1.0f : 0.0f;
             });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("DhShadowIntensity", () -> {
+                var config = ConfigManager.instance();
+                return config != null ? config.dhShadowIntensity : 0.5f;
+            });
             net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("CloudShadowIntensity", () -> {
                 var config = ConfigManager.instance();
                 return config != null ? config.shadowIntensity : 0.85f;

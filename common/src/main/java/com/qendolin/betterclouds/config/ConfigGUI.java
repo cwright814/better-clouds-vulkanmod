@@ -62,6 +62,7 @@ public class ConfigGUI {
     public final Option<Boolean> shadowsEnabled;
     public final Option<Boolean> syncedShadows;
     public final Option<Float> shadowIntensity;
+    public final Option<Float> dhShadowIntensity;
     public final Option<Float> shadowOffsetX;
     public final Option<Float> shadowOffsetZ;
     public final Option<Float> shadowRotation;
@@ -223,6 +224,10 @@ public class ConfigGUI {
                 .build();
         this.shadowIntensity = createOption(float.class, "shadowIntensity")
                 .binding(defaults.shadowIntensity, () -> config.shadowIntensity, val -> config.shadowIntensity = val)
+                .customController(opt -> new FloatSliderController(opt, 0.0f, 1.0f, 0.05f, val -> Component.literal(Math.round(val * 100) + "%")))
+                .build();
+        this.dhShadowIntensity = createOption(float.class, "dhShadowIntensity")
+                .binding(defaults.dhShadowIntensity, () -> config.dhShadowIntensity, val -> config.dhShadowIntensity = val)
                 .customController(opt -> new FloatSliderController(opt, 0.0f, 1.0f, 0.05f, val -> Component.literal(Math.round(val * 100) + "%")))
                 .build();
         this.shadowOffsetX = createOption(float.class, "shadowOffsetX")
@@ -394,7 +399,7 @@ public class ConfigGUI {
                 shadowFlipZ
         ));
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.category.shadows"))
-                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity).build());
+                .option(shadowsEnabled).option(syncedShadows).option(shadowIntensity).option(dhShadowIntensity).build());
         shadowCategory.group(OptionGroup.createBuilder().name(Component.translatable("betterclouds.config.group.shadows.debug"))
                 .option(shadowOffsetX).option(shadowOffsetZ).option(shadowRotation)
                 .option(shadowFlipX).option(shadowFlipZ).option(shadowScale).build());

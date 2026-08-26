@@ -28,7 +28,7 @@ layout(binding = 2) uniform CloudUBO {
     float CloudTime;
     float CameraX;
     float CameraZ;
-    float CloudShadowIntensity;
+    float DhShadowIntensity;
     float NoiseOffsetX;
     float NoiseOffsetZ;
     float ShadowOffsetX;
@@ -140,7 +140,7 @@ float computeCloudShadow(vec2 wpos) {
         addCloudUniform(cloudStruct, "CloudTime");
         addCloudUniform(cloudStruct, "CameraX");
         addCloudUniform(cloudStruct, "CameraZ");
-        addCloudUniform(cloudStruct, "CloudShadowIntensity");
+        addCloudUniform(cloudStruct, "DhShadowIntensity");
         addCloudUniform(cloudStruct, "NoiseOffsetX");
         addCloudUniform(cloudStruct, "NoiseOffsetZ");
         addCloudUniform(cloudStruct, "ShadowOffsetX");
@@ -169,7 +169,7 @@ float computeCloudShadow(vec2 wpos) {
                     // Apply cloud shadow
                     float cShadow = computeCloudShadow(vertexWorldPos.xz);
                     if (cShadow > 0.0) {
-                        float shadowFactor = mix(1.0, 1.0 - CloudShadowIntensity, cShadow);
+                        float shadowFactor = mix(1.0, 1.0 - DhShadowIntensity, cShadow);
                         fragColor.rgb *= shadowFactor;
                     }
                 }""";
