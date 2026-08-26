@@ -18,8 +18,8 @@ layout(location = 1) in vec3 fragPos;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 4) uniform sampler2D Sampler1;
-layout(binding = 3) uniform CloudUBO {
+layout(binding = 3) uniform sampler2D Sampler1;
+layout(binding = 2) uniform CloudUBO {
     float BerylSkyDithering;
 };
 

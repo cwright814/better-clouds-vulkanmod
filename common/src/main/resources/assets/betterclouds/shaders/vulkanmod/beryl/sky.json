@@ -21,7 +21,7 @@
       { "name": "NightMultiplier", "type": "float", "count": 1, "values": [ 1.0 ] },
       { "name": "LightVisibility", "type": "float", "count": 1, "values": [ 1.0 ] }
     ] },
-    { "type": "fragment", "binding": 3, "fields": [
+    { "type": "fragment", "binding": 2, "fields": [
       { "name": "BerylSkyDithering", "type": "float", "count": 1 }
     ] }
   ]
