@@ -81,6 +81,9 @@ public class ConfigManager {
 
         try {
             config.load();
+            if (config.instance().berylSkyDitheringType == null) {
+                config.instance().berylSkyDitheringType = Config.DitheringType.INTERLEAVED;
+            }
             Migrations.migrate(config.instance());
             return;
         } catch (Exception e) {

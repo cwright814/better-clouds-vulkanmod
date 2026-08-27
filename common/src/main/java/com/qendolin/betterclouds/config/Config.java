@@ -41,7 +41,14 @@ public class Config {
     public boolean shadowsEnabled = true;
     @SerialEntry
     public boolean syncedShadows = true;
+    @SerialEntry
     public boolean berylSkyDithering = true;
+    @SerialEntry
+    public DitheringType berylSkyDitheringType = DitheringType.INTERLEAVED;
+    @SerialEntry
+    public boolean berylSkyDitheringTriangle = true;
+    @SerialEntry
+    public boolean berylSkyDitheringJitter = false;
     @SerialEntry
     public float shadowIntensity = 0.85f;
     public float dhShadowIntensity = 0.3f;
@@ -275,6 +282,15 @@ public class Config {
         @Override
         public Component getDisplayName() {
             return Component.translatable("betterclouds.config.entry.timeSource.option." + name().toLowerCase());
+        }
+    }
+
+    public enum DitheringType implements NameableEnum {
+        WHITE, INTERLEAVED;
+
+        @Override
+        public Component getDisplayName() {
+            return Component.translatable("betterclouds.config.entry.ditheringType.option." + name().toLowerCase());
         }
     }
 

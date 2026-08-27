@@ -22,7 +22,10 @@
       { "name": "LightVisibility", "type": "float", "count": 1, "values": [ 1.0 ] }
     ] },
     { "type": "fragment", "binding": 2, "fields": [
-      { "name": "BerylSkyDithering", "type": "float", "count": 1 }
+      { "name": "BerylSkyDithering", "type": "float", "count": 1 },
+      { "name": "BerylSkyDitheringType", "type": "float", "count": 1 },
+      { "name": "BerylSkyDitheringTriangle", "type": "float", "count": 1 },
+      { "name": "BerylSkyDitheringJitter", "type": "float", "count": 1 }
     ] }
   ]
 }

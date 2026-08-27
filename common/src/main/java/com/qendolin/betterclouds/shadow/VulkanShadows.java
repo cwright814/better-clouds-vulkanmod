@@ -34,6 +34,21 @@ public class VulkanShadows {
                 var config = ConfigManager.instance();
                 return (config != null && config.berylSkyDithering) ? 1.0f : 0.0f;
             });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("BerylSkyDitheringType", () -> {
+                var config = ConfigManager.instance();
+                return (config != null && config.berylSkyDitheringType != null) ? (float) config.berylSkyDitheringType.ordinal() : 1.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("BerylSkyDitheringTriangle", () -> {
+                var config = ConfigManager.instance();
+                return (config != null && config.berylSkyDitheringTriangle) ? 1.0f : 0.0f;
+            });
+            net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("BerylSkyDitheringJitter", () -> {
+                var config = ConfigManager.instance();
+                if (config != null && config.berylSkyDitheringJitter) {
+                    return (System.currentTimeMillis() % 100000L) / 16.0f;
+                }
+                return 0.0f;
+            });
             net.vulkanmod.vulkan.shader.Uniforms.vec1f_uniformMap.put("DhShadowIntensity", () -> {
                 var config = ConfigManager.instance();
                 return config != null ? config.dhShadowIntensity : 0.3f;

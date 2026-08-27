@@ -62,6 +62,9 @@ public class ConfigGUI {
     public final Option<Boolean> shadowsEnabled;
     public final Option<Boolean> syncedShadows;
     public final Option<Boolean> berylSkyDithering;
+    public final Option<Config.DitheringType> berylSkyDitheringType;
+    public final Option<Boolean> berylSkyDitheringTriangle;
+    public final Option<Boolean> berylSkyDitheringJitter;
     public final Option<Float> shadowIntensity;
     public final Option<Float> dhShadowIntensity;
     public final Option<Float> shadowOffsetX;
@@ -223,6 +226,18 @@ public class ConfigGUI {
                 .binding(defaults.berylSkyDithering, () -> config.berylSkyDithering, val -> config.berylSkyDithering = val)
                 .customController(TickBoxController::new)
                 .build();
+        this.berylSkyDitheringType = createOption(Config.DitheringType.class, "berylSkyDitheringType")
+                .binding(defaults.berylSkyDitheringType, () -> config.berylSkyDitheringType != null ? config.berylSkyDitheringType : Config.DitheringType.INTERLEAVED, val -> config.berylSkyDitheringType = val)
+                .customController(opt -> new EnumController<>(opt, Config.DitheringType.class))
+                .build();
+        this.berylSkyDitheringTriangle = createOption(boolean.class, "berylSkyDitheringTriangle")
+                .binding(defaults.berylSkyDitheringTriangle, () -> config.berylSkyDitheringTriangle, val -> config.berylSkyDitheringTriangle = val)
+                .customController(TickBoxController::new)
+                .build();
+        this.berylSkyDitheringJitter = createOption(boolean.class, "berylSkyDitheringJitter")
+                .binding(defaults.berylSkyDitheringJitter, () -> config.berylSkyDitheringJitter, val -> config.berylSkyDitheringJitter = val)
+                .customController(TickBoxController::new)
+                .build();
         this.syncedShadows = createOption(boolean.class, "syncedShadows")
                 .binding(defaults.syncedShadows, () -> config.syncedShadows, val -> config.syncedShadows = val)
                 .customController(TickBoxController::new)
@@ -374,6 +389,9 @@ public class ConfigGUI {
                 .name(groupLabel("appearance.sky")), appearanceSkyGroup));
         appearanceSkyGroup.add(celestialBodyHalo);
         appearanceSkyGroup.add(berylSkyDithering);
+        appearanceSkyGroup.add(berylSkyDitheringType);
+        appearanceSkyGroup.add(berylSkyDitheringTriangle);
+        appearanceSkyGroup.add(berylSkyDitheringJitter);
 
         categories.add(new Tuple<>(ConfigCategory.createBuilder()
                 .name(categoryLabel("performance")), performanceCategory));
