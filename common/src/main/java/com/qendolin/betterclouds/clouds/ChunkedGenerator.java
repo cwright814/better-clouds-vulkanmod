@@ -110,12 +110,12 @@ public class ChunkedGenerator implements AutoCloseable {
 
     public synchronized double renderOriginX(double cameraX) {
         if (swappedTask == null) return 0;
-        return swappedTask.chunkX() * swappedTask.options().chunkSize - cameraX + originX;
+        return swappedTask.chunkX() * (double) swappedTask.options().chunkSize - cameraX + originX;
     }
 
     public synchronized double renderOriginZ(double cameraZ) {
         if (swappedTask == null) return 0;
-        return swappedTask.chunkZ() * swappedTask.options().chunkSize - cameraZ + originZ;
+        return swappedTask.chunkZ() * (double) swappedTask.options().chunkSize - cameraZ + originZ;
     }
 
     public synchronized int cloudCount() {
@@ -478,9 +478,9 @@ public class ChunkedGenerator implements AutoCloseable {
 
                     for (AABB point : samplePoints.points()) {
                         generator.buffer.put(
-                                (float) (point.minX - this.chunkX * options.chunkSize),
+                                (float) (point.minX - this.chunkX * (double) options.chunkSize),
                                 (float) point.minY,
-                                (float) (point.minZ - this.chunkZ * options.chunkSize)
+                                (float) (point.minZ - this.chunkZ * (double) options.chunkSize)
                         );
                     }
                     cloudCount += samplePoints.points().size();
@@ -532,19 +532,19 @@ public class ChunkedGenerator implements AutoCloseable {
                         // so the cube is placed below the normal cloud y range, like this:
                         if (pass == 1) cloudHeight *= -0.3f;
 
-                        float exactX = globalGridX * spacing;
-                        float exactZ = globalGridZ * spacing;
-                        float x = exactX + generator.sampler.randomOffsetX(sampleX, sampleZ, pass) * options.randomPlacement * spacing;
+                        double exactX = (double) globalGridX * spacing;
+                        double exactZ = (double) globalGridZ * spacing;
+                        double x = exactX + generator.sampler.randomOffsetX(sampleX, sampleZ, pass) * options.randomPlacement * spacing;
                         
                         // Add a deterministic offset to prevent Z-fighting between overlapping clouds.
                         // Increased from 0.005f to 0.03f to overcome 24-bit depth precision limits at long distances.
                         float zFightOffset = (Math.abs(sampleX * 3) % 10 + Math.abs(sampleZ * 7) % 10) * 0.03f * options.zFightOffsetMultiplier;
-                        float y = cloudHeight + options.yOffset + zFightOffset;
+                        double y = cloudHeight + options.yOffset + zFightOffset;
                         
                         float zFightOffsetX = (Math.abs(sampleZ * 5) % 10) * 0.015f * options.zFightOffsetMultiplier;
                         float zFightOffsetZ = (Math.abs(sampleX * 9) % 10) * 0.015f * options.zFightOffsetMultiplier;
                         
-                        float z = exactZ + generator.sampler.randomOffsetZ(sampleX, sampleZ, pass) * options.randomPlacement * spacing + zFightOffsetZ;
+                        double z = exactZ + generator.sampler.randomOffsetZ(sampleX, sampleZ, pass) * options.randomPlacement * spacing + zFightOffsetZ;
                         x += zFightOffsetX;
 
                         AABB pointAABB = new AABB(x, y, z, x, y, z);

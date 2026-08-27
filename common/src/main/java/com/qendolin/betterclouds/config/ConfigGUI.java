@@ -41,7 +41,6 @@ public class ConfigGUI {
     public final Option<Float> yRange;
     public final Option<Float> yOffset;
     public final Option<Float> zFightOffsetMultiplier;
-    public final Option<Config.TimeSource> timeSource;
     public final Option<Float> bottomSparsity;
     public final Option<Float> samplingScale;
     public final Option<Float> sizeXZ;
@@ -147,10 +146,6 @@ public class ConfigGUI {
         this.zFightOffsetMultiplier = createOption(float.class, "zFightOffsetMultiplier")
                 .binding(defaults.zFightOffsetMultiplier, () -> config.zFightOffsetMultiplier, val -> config.zFightOffsetMultiplier = val)
                 .customController(opt -> new FloatSliderController(opt, 0.0f, 10.0f, 0.1f, ConfigGUI::formatAsTimes))
-                .build();
-        this.timeSource = createOption(Config.TimeSource.class, "timeSource")
-                .binding(defaults.timeSource, () -> config.timeSource, val -> config.timeSource = val)
-                .customController(opt -> new EnumController<>(opt, Config.TimeSource.class))
                 .build();
         this.bottomSparsity = createOption(float.class, "bottomSparsity")
                 .binding(defaults.bottomSparsity, () -> config.bottomSparsity, val -> config.bottomSparsity = val)
@@ -322,7 +317,6 @@ public class ConfigGUI {
                 yRange,
                 yOffset,
                 zFightOffsetMultiplier,
-                timeSource,
                 bottomSparsity,
                 spacing,
                 samplingScale

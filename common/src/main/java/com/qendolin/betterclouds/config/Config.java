@@ -110,8 +110,6 @@ public class Config {
     @SerialEntry
     public float fogEndFactor = 1f;
     @SerialEntry
-    public TimeSource timeSource = TimeSource.WORLD;
-    @SerialEntry
     public boolean usePersistentBuffers = true;
     @SerialEntry
     public boolean useFrustumCulling = true;
@@ -270,15 +268,6 @@ public class Config {
     @Override
     public int hashCode() {
         return Configs.hashCode(this);
-    }
-
-    public enum TimeSource implements NameableEnum {
-        WORLD, PLAYTIME, RENDERER;
-
-        @Override
-        public Component getDisplayName() {
-            return Component.translatable("betterclouds.config.entry.timeSource.option." + name().toLowerCase());
-        }
     }
 
     public enum DitheringType implements NameableEnum {
