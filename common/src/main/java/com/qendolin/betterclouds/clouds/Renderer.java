@@ -105,7 +105,9 @@ public class Renderer implements AutoCloseable {
     }
 
     public static long getCloudTicks() {
-        return System.currentTimeMillis() / 50L;
+        // Subtract an epoch (Jan 1, 2026) to prevent the tick count from becoming so large
+        // that it breaks 32-bit float precision in the Vulkan GPU shaders.
+        return (System.currentTimeMillis() - 1767243600000L) / 50L;
     }
 
     private ShaderParameters createShaderParameters(Config config) {

@@ -123,15 +123,15 @@ public class Sampler {
         float value;
         if (ConfigManager.instance().syncedShadows) {
             // Base noise coordinate
-            float fScale = scale * 128.0f;
-            float nx = (float) x / fScale + 0.5f;
-            float nz = (float) z / fScale + 0.5f;
+            double fScale = scale * 128.0;
+            double nx = (double) x / fScale + 0.5;
+            double nz = (double) z / fScale + 0.5;
             
             // 4 octaves to match the GPU shader exactly!
-            value = SNoise.snoise(nx * 0.25f, nz * 0.25f, noiseOffsetX, noiseOffsetZ) * 0.4f
-                  + SNoise.snoise(nx * 0.5f,  nz * 0.5f,  noiseOffsetX, noiseOffsetZ) * 0.3f
+            value = SNoise.snoise(nx * 0.25, nz * 0.25, noiseOffsetX, noiseOffsetZ) * 0.4f
+                  + SNoise.snoise(nx * 0.5,  nz * 0.5,  noiseOffsetX, noiseOffsetZ) * 0.3f
                   + SNoise.snoise(nx,         nz,         noiseOffsetX, noiseOffsetZ) * 0.2f
-                  + SNoise.snoise(nx * 2.0f,  nz * 2.0f,  noiseOffsetX, noiseOffsetZ) * 0.1f;
+                  + SNoise.snoise(nx * 2.0,  nz * 2.0,  noiseOffsetX, noiseOffsetZ) * 0.1f;
         } else {
             // Shift coordinates slightly to avoid artifacts at the exact noise origin (0,0)
             double nx = (double) x / scale / 128.0 + 0.5;
@@ -159,7 +159,7 @@ public class Sampler {
         value = value / 2.0f + 0.5f;
         value = (value - (1.0f - cloudiness)) / cloudiness;
         if (ConfigManager.instance().syncedShadows) {
-            value *= (float)smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, SNoise.snoise((float)(x / 1024.0 + 0.5), (float)(z / 1024.0 + 0.5), noiseOffsetX, noiseOffsetZ));
+            value *= (float)smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, SNoise.snoise(x / 1024.0 + 0.5, z / 1024.0 + 0.5, noiseOffsetX, noiseOffsetZ));
         } else {
             value *= (float)smoothstep(-0.6 * cloudiness - 0.3, -0.6 * cloudiness, coverageNoise.getValue((double) x / 1024.0 + 0.5, (double) z / 1024.0 + 0.5));
         }
