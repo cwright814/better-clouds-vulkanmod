@@ -57,13 +57,7 @@ void main() {
 
     vec3 worldDirection = normalize(localWorldPosition);
 
-    float waveScale = texture(u_noise_texture, (localWorldPosition.xz + u_bounding_box.xy) / 4000.0 + vec2(u_miscellaneous.z * u_time / 800.0)).r;
-    float smallWaves = texture(u_noise_texture, (localWorldPosition.zx + u_bounding_box.yx) / 1000.0 + vec2(u_miscellaneous.z * u_time / 200.0)).r * 1.8 - 0.9;
-    waveScale = mix(mix(waveScale, 1.0, max(smallWaves, 0.0)), 0.0, max(-smallWaves, 0.0));
-    float cloudHeight = absolute_pos.y - u_miscellaneous.w;
-    float fDynScale = 1.0 - smoothstep(0.0, u_bounding_box.w / 4.0, cloudHeight + 0.5);
-    float dynScale = mix(1.0, waveScale, fDynScale * u_miscellaneous.y);
-    vec3 scale = SIZE * dynScale * scaleFalloff;
+    vec3 scale = SIZE * 1.0 * scaleFalloff;
 
     vec3 vertexPos = scale * in_vert + cloudPos;
     vec3 localWorldVertexPos = vertexPos - u_origin_offset;

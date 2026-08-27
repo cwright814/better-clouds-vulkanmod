@@ -74,7 +74,7 @@ public class VulkanRenderer implements AutoCloseable {
         res.generator.reallocateIfStale(config, true);
 
         float cloudiness = com.qendolin.betterclouds.clouds.CloudinessProvider.getCloudiness(client.level, tickDelta);
-        res.generator.update(cam, ticks, ticks, tickDelta, config, cloudiness);
+        res.generator.update(cam, com.qendolin.betterclouds.clouds.Renderer.getCloudTicks(), ticks, tickDelta, config, cloudiness);
         
         if (res.generator.canGenerate() && !res.generator.generating() && !com.qendolin.betterclouds.clouds.Debug.generatorPause) {
             res.generator.generate();
@@ -152,7 +152,7 @@ public class VulkanRenderer implements AutoCloseable {
             (float) -res.generator.renderOriginZ(cam.z)
         ));
         res.shader.setUniformFloat("u_time", time);
-        res.shader.setUniformVec4("u_miscellaneous", new org.joml.Vector4f(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor, config.yOffset));
+        res.shader.setUniformVec4("u_miscellaneous", new org.joml.Vector4f(config.scaleFalloffMin, 0f, 0f, config.yOffset));
         res.shader.setUniformFloat("u_noise_factor", config.colorVariationFactor);
         float rain = client.level.getRainLevel(tickDelta);
         float thunder = client.level.getThunderLevel(tickDelta);

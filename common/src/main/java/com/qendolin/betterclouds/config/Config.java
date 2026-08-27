@@ -86,10 +86,6 @@ public class Config {
     @SerialEntry
     public float travelSpeed = 0.15f;
     @SerialEntry
-    public float windEffectFactor = 1.0f;
-    @SerialEntry
-    public float windSpeedFactor = 0.4f;
-    @SerialEntry
     public float colorVariationFactor = 0.8f;
     @SerialEntry
     public boolean celestialBodyHalo = true;

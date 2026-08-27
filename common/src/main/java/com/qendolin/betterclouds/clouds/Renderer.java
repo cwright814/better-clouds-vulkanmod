@@ -104,14 +104,8 @@ public class Renderer implements AutoCloseable {
         return (int) (ConfigManager.instance().shaderPreset().upscaleResolutionFactor * client.gameRenderer.mainRenderTarget().height);
     }
 
-    private long getCloudTicks(int rendererTicks) {
-        Config config = ConfigManager.instance();
-        if (client.level == null) return rendererTicks;
-        return switch (config.timeSource) {
-            case WORLD -> client.level.getOverworldClockTime();
-            case PLAYTIME -> client.level.getGameTime();
-            case RENDERER -> rendererTicks;
-        };
+    public static long getCloudTicks() {
+        return System.currentTimeMillis() / 50L;
     }
 
     private ShaderParameters createShaderParameters(Config config) {
@@ -155,7 +149,7 @@ public class Renderer implements AutoCloseable {
         res.generator().reallocateIfStale(config, useCubeClouds());
 
         float cloudiness = CloudinessProvider.getCloudiness(client.level, tickDelta);
-        res.generator().update(cam, getCloudTicks(ticks), ticks, tickDelta, ConfigManager.instance(), cloudiness);
+        res.generator().update(cam, getCloudTicks(), ticks, tickDelta, ConfigManager.instance(), cloudiness);
         if (res.generator().canGenerate() && !res.generator().generating() && !Debug.generatorPause) {
             getProfiler().popPush("generate_clouds");
             res.generator().generate();
@@ -318,7 +312,7 @@ public class Renderer implements AutoCloseable {
         res.coverageShader().uOriginOffset.setVec3((float) -res.generator().renderOriginX(cam.x), (float) cam.y - cloudsHeight, (float) -res.generator().renderOriginZ(cam.z));
         res.coverageShader().uBoundingBox.setVec4((float) cam.x, (float) cam.z, generatorConfig.blockDistance() - generatorConfig.chunkSize / 2f, generatorConfig.yRange + config.sizeY);
         res.coverageShader().uTime.setFloat(ticks / 20);
-        res.coverageShader().uMiscellaneous.setVec4(config.scaleFalloffMin, config.windEffectFactor, config.windSpeedFactor, config.yOffset);
+        res.coverageShader().uMiscellaneous.setVec4(config.scaleFalloffMin, 0f, 0f, config.yOffset);
         if (fog == null) { // Fog off
             res.coverageShader().uFogRange.setVec2(config.blockDistance() - 8, config.blockDistance());
         } else {
