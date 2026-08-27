@@ -439,8 +439,8 @@ public class ChunkedGenerator implements AutoCloseable {
             int gridMax = Mth.ceil(distance / spacing);
 
             // global/world sample-grid origin of this task's origin chunk
-            int gridOriginX = Mth.floor((this.chunkX * (double) options.chunkSize) / (double) spacing);
-            int gridOriginZ = Mth.floor((this.chunkZ * (double) options.chunkSize) / (double) spacing);
+            int gridOriginX = Mth.floor((this.chunkX * options.chunkSize) / spacing);
+            int gridOriginZ = Mth.floor((this.chunkZ * options.chunkSize) / spacing);
 
             int globalGridMinX = gridOriginX + gridMin;
             int globalGridMaxX = gridOriginX + gridMax;
@@ -519,8 +519,8 @@ public class ChunkedGenerator implements AutoCloseable {
                         continue;
 
                     // global/world block coordinates sampled from the cloud noise field
-                    int sampleX = Mth.floor(globalGridX * (double) spacing);
-                    int sampleZ = Mth.floor(globalGridZ * (double) spacing);
+                    int sampleX = Mth.floor(globalGridX * spacing);
+                    int sampleZ = Mth.floor(globalGridZ * spacing);
 
                     float value = generator.sampler.sample(sampleX, sampleZ, cloudiness, options.fuzziness, options.samplingScale);
                     if (value <= 0) continue;

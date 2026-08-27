@@ -105,10 +105,10 @@ public class Renderer implements AutoCloseable {
     }
 
     public static long getCloudTicks() {
-        // Modulus by 1 year of ticks (365.25 * 24 * 60 * 60 * 20) to prevent the tick count 
-        // from becoming so large that it breaks 32-bit float precision in the Vulkan GPU shaders.
-        // This causes the clouds to seamlessly "snap" back to their original position exactly once a year.
-        return (System.currentTimeMillis() / 50L) % 631152000L;
+        // Modulus by 1 week of ticks (12096000L) aligned to a Monday at 6:00 AM EST (11:00 UTC).
+        // Jan 5, 2026 11:00:00 UTC is exactly 1767610800000L in milliseconds.
+        long ms = System.currentTimeMillis() - 1767610800000L;
+        return (ms / 50L) % 12096000L;
     }
 
     private ShaderParameters createShaderParameters(Config config) {
